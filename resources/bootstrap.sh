@@ -64,8 +64,8 @@ install_elasticsearch
 
 # Setup bash_profile
 cat > /home/ubuntu/.bash_profile <<EOL
-export PATH=\$PATH:/usr/local/go/bin
-export GOPATH=\$HOME
+export GOPATH=/var/www/workspace
+export PATH=\$PATH:/usr/local/go/bin:\$GOPATH/bin
 
 cd /var/www
 EOL
