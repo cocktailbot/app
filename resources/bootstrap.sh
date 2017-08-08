@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # The output of all these installation steps is noisy. With this utility
 # the progress report is nice and concise.
+
+PATH_SELF=/home/ubuntu/go_workspace/src/github.com/shrwdflrst/cocktailbot
+
 function install {
     echo installing $1
     shift
@@ -41,7 +44,7 @@ function install_elasticsearch {
     sudo dpkg -i elasticsearch-5.5.1.deb
 
     sudo systemctl enable elasticsearch.service
-    sudo cp -f /var/www/resources/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+    sudo cp -f ${PATH_SELF}/resources/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
     sudo systemctl restart elasticsearch
 }
 
@@ -63,14 +66,9 @@ install_go
 install_elasticsearch
 
 # Setup bash_profile
-cat > /home/ubuntu/.bash_profile <<EOL
-export GOPATH=/var/www/workspace
-export PATH=\$PATH:/usr/local/go/bin:\$GOPATH/bin
-
-cd /var/www
-EOL
-
-source /home/ubuntu/.bash_profile
-go get "github.com/elastic/go-elasticsearch/client"
+cp ${PATH_SELF}/resources/.bash_profile /home/ubuntu
+chown ubuntu:ubuntu /home/ubuntu/.bash_profile
+mkdir -p /home/ubuntu/go_workspace/{pkg,bin}
+chown -R ubuntu:ubuntu /home/ubuntu/go_workspace
 
 echo "Finished!"
