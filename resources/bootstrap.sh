@@ -70,4 +70,7 @@ export PATH=\$PATH:/usr/local/go/bin:\$GOPATH/bin
 cd /var/www
 EOL
 
+source /home/ubuntu/.bash_profile
+go get "github.com/elastic/go-elasticsearch/client"
+
 echo "Finished!"

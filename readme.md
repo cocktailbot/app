@@ -11,6 +11,10 @@ Stopping
 
     vagrant suspend
 
+Testing importer
+
+    go run src/cocktail_bot/importer/importer.go /var/www/data/recipes.json
+
 Troubleshooting; if there's issues with the VM, try destroying and rebuilding
 
     vagrant destroy -f
