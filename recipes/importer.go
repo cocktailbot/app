@@ -1,46 +1,48 @@
-package main
+package recipes
 
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
+// Recipe represents cocktail recipe
+type Recipe struct {
+	ID         string `json:"id"`
+	Title      string `json:"title"`
+	Categories []struct {
+		ID    string `json:"id"`
+		Title string `json:"title"`
+	} `json:"categories"`
+	DifficultyRating string `json:"difficultyRating"`
+	RecipeTimes      []struct {
+		Title string `json:"title"`
+		Time  string `json:"time"`
+	} `json:"recipeTimes"`
+	TotalTime   string `json:"totalTime"`
+	Description string `json:"description"`
+	Ingredients []struct {
+		Title string `json:"title"`
+		List  []struct {
+			Amount     string `json:"amount"`
+			Ingredient string `json:"ingredient"`
+			Notes      string `json:"notes"`
+		} `json:"list"`
+	} `json:"ingredients"`
+	Methods []struct {
+		Title string `json:"title"`
+		List  []struct {
+			Step string `json:"step"`
+		} `json:"list"`
+	} `json:"methods"`
+}
+
 // Recipes represents a collection of recipes
 type Recipes struct {
-	Data []struct {
-		ID         string `json:"id"`
-		Title      string `json:"title"`
-		Categories []struct {
-			ID    string `json:"id"`
-			Title string `json:"title"`
-		} `json:"categories"`
-		DifficultyRating string `json:"difficultyRating"`
-		RecipeTimes      []struct {
-			Title string `json:"title"`
-			Time  string `json:"time"`
-		} `json:"recipeTimes"`
-		TotalTime   string `json:"totalTime"`
-		Description string `json:"description"`
-		Ingredients []struct {
-			Title string `json:"title"`
-			List  []struct {
-				Amount     string `json:"amount"`
-				Ingredient string `json:"ingredient"`
-				Notes      string `json:"notes"`
-			} `json:"list"`
-		} `json:"ingredients"`
-		Methods []struct {
-			Title string `json:"title"`
-			List  []struct {
-				Step string `json:"step"`
-			} `json:"list"`
-		} `json:"methods"`
-	} `json:"data"`
+	Data []Recipe `json:"data"`
 }
 
 // Categories are a recipe taxonomy
@@ -69,34 +71,31 @@ func check(e error) {
 	}
 }
 
-func main() {
+// Do save json into Elasticsearch
+func Do() {
 	// Get path arg
 	args := os.Args[1:]
 	path := args[0]
-	fmt.Println("Reading file: " + path)
+	// fmt.Println("Reading file: " + path)
 
 	// Read in json string
-	data, err := ioutil.ReadFile(path)
+	file, err := ioutil.ReadFile(path)
 	check(err)
-	// fmt.Println(string(data))
+	// fmt.Println(string(file))
 
 	// Parse json to struct
-	var dat map[string]interface{}
+	var recipes Recipes
 
-	if err = json.Unmarshal(data, &dat); err != nil {
+	if err = json.Unmarshal(file, &recipes); err != nil {
 		panic(err)
 	}
 
-	// fmt.Println(dat)
-
-	// Create a context
 	ctx := context.Background()
-
-	// Create a client
-	index := "twitter"
 	client, err := elastic.NewClient()
 	check(err)
 
+	index := "cocktails"
+	typ := "recipe"
 	exists, err := client.IndexExists(index).Do(ctx)
 	check(err)
 	if exists {
@@ -105,11 +104,9 @@ func main() {
 
 	indexParams := `{
 		"mappings":{
-			"tweet":{
+			"recipe":{
 				"properties": {
-					"user": {
-						"type":"keyword"
-					}
+
 				}
 			}
 		}
@@ -119,29 +116,19 @@ func main() {
 	_, err = client.CreateIndex(index).BodyString(indexParams).Do(ctx)
 	check(err)
 
-	// Add a document to the index
-	tweet := Tweet{User: "olivere", Message: "Take Five"}
-	_, err = client.Index().
-		Index(index).
-		Type("tweet").
-		Id("1").
-		BodyJson(tweet).
-		Refresh("true").
-		Do(ctx)
-	check(err)
+	bulkRequest := client.Bulk()
 
-	// Search with a term query
-	termQuery := elastic.NewTermQuery("user", "olivere")
-	searchResult, err := client.Search().
-		Index(index).       // search in index "twitter"
-		Query(termQuery).   // specify the query
-		Sort("user", true). // sort by "user" field, ascending
-		From(0).Size(10).   // take documents 0-9
-		Pretty(true).       // pretty print request and response JSON
-		Do(ctx)             // execute
-	check(err)
+	for i := 0; i < len(recipes.Data); i++ {
+		// fmt.Println(recipes.Data[i].Title)
+		indexReq := elastic.
+			NewBulkIndexRequest().
+			Index(index).
+			Type(typ).
+			Id(recipes.Data[i].ID).
+			Doc(recipes.Data[i])
+		bulkRequest = bulkRequest.Add(indexReq)
+	}
 
-	// searchResult is of type SearchResult and returns hits, suggestions,
-	// and all kinds of other information from Elasticsearch.
-	fmt.Printf("Query took %d milliseconds\n", searchResult.TookInMillis)
+	_, err = bulkRequest.Do(ctx)
+	check(err)
 }
