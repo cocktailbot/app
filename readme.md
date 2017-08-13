@@ -1,10 +1,12 @@
 # Cocktailbot.recipes
 
+Place this folder into `$YOUR_GO_WORKSPACE/src/github.com/shrwdflrst/cocktailbot`
 
 ## Local environment
 
 Starting it up; this will setup the VM and install Go 1.8 and Elasticsearch 5.5
 
+    cd resources
     vagrant up
 
 Stopping
