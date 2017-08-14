@@ -22,6 +22,14 @@ Accessing local environment
 
     vagrant ssh
 
+## Commands
+
+These are accessible after compiling with `go build`.
+
+Import recipes into Elasticsearch:
+
+    ./cocktailbot --recipes resources/data/recipes.json
+
 
 ## References
 
