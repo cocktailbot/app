@@ -3,6 +3,7 @@ package search
 import (
 	"context"
 	"fmt"
+    "encoding/json"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
@@ -106,4 +107,49 @@ func Save(recipes Recipes) error {
 	}
 
 	return nil
+}
+
+// Search for recipes matching the terms
+func ByIngredient(values []string, from int, size int) (matches []Recipe, err error) {
+    ctx := context.Background()
+	client, err := elastic.NewClient()
+
+	if err != nil {
+		return matches, err
+	}
+
+    boolQuery := elastic.NewBoolQuery()
+    fields := [2]string{"ingredients.list.ingredient^5", "*"}
+
+    for i := 0; i < len(values); i++ {
+        query := elastic.NewMultiMatchQuery(values[i], fields[0], fields[1])
+        boolQuery = boolQuery.Should(query)
+    }
+
+    response, err := client.
+        Search(Index).
+        From(from).
+        Size(size).
+        Query(boolQuery).
+        Pretty(true).
+        Do(ctx)
+
+	if err != nil || response.TotalHits() == 0 {
+		return matches, err
+	}
+
+    if response.Hits.TotalHits > 0 {
+        for _, hit := range response.Hits.Hits {
+            var r Recipe
+            err := json.Unmarshal(*hit.Source, &r)
+
+            if err != nil {
+                return nil, err
+            }
+
+            matches = append(matches, r)
+        }
+    }
+
+    return
 }
