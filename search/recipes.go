@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
-	"os"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
@@ -114,24 +112,20 @@ func Save(recipes Recipes) error {
 // ByIngredient search for recipes matching the terms
 func ByIngredient(values []string, from int, size int) (matches []Recipe, err error) {
 	ctx := context.Background()
-	// client, err := elastic.NewClient()
-	client, err := elastic.NewClient(
-		elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
-		elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
-		elastic.SetTraceLog(log.New(os.Stderr, "[[ELASTIC]]", 0)))
+	client, err := elastic.NewClient()
+	// client, err := elastic.NewClient(
+	// 	elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
+	// 	elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
+	// 	elastic.SetTraceLog(log.New(os.Stderr, "[[ELASTIC]]", 0)))
 
 	if err != nil {
 		return matches, err
 	}
 
-	// q := elastic.NewTermQuery("title", values[0])
-	// query := elastic.NewTermQuery("id", 861)
 	query := elastic.NewBoolQuery()
-	// query = query.Should(q)
 
 	for i := 0; i < len(values); i++ {
-		q := elastic.NewMultiMatchQuery(values[i], "*")
-		fmt.Println(q.Source())
+		q := elastic.NewMultiMatchQuery(values[i], "ingredients.*")
 		query = query.Should(q)
 	}
 

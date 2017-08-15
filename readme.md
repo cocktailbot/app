@@ -28,7 +28,11 @@ These are accessible after compiling with `go build`.
 
 Import recipes into Elasticsearch:
 
-    ./cocktailbot --recipes resources/data/recipes.json
+    go run cocktail.go --recipes resources/data/recipes.json
+
+Search for recipes with `lemon` and `apple` as ingredients
+
+    go run cocktail.go --search lemon apple
 
 
 ## References
