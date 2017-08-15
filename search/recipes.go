@@ -2,8 +2,10 @@ package search
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-    "encoding/json"
+	"log"
+	"os"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
@@ -109,47 +111,54 @@ func Save(recipes Recipes) error {
 	return nil
 }
 
-// Search for recipes matching the terms
+// ByIngredient search for recipes matching the terms
 func ByIngredient(values []string, from int, size int) (matches []Recipe, err error) {
-    ctx := context.Background()
-	client, err := elastic.NewClient()
+	ctx := context.Background()
+	// client, err := elastic.NewClient()
+	client, err := elastic.NewClient(
+		elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
+		elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
+		elastic.SetTraceLog(log.New(os.Stderr, "[[ELASTIC]]", 0)))
 
 	if err != nil {
 		return matches, err
 	}
 
-    boolQuery := elastic.NewBoolQuery()
-    fields := [2]string{"ingredients.list.ingredient^5", "*"}
+	// q := elastic.NewTermQuery("title", values[0])
+	// query := elastic.NewTermQuery("id", 861)
+	query := elastic.NewBoolQuery()
+	// query = query.Should(q)
 
-    for i := 0; i < len(values); i++ {
-        query := elastic.NewMultiMatchQuery(values[i], fields[0], fields[1])
-        boolQuery = boolQuery.Should(query)
-    }
+	for i := 0; i < len(values); i++ {
+		q := elastic.NewMultiMatchQuery(values[i], "*")
+		fmt.Println(q.Source())
+		query = query.Should(q)
+	}
 
-    response, err := client.
-        Search(Index).
-        From(from).
-        Size(size).
-        Query(boolQuery).
-        Pretty(true).
-        Do(ctx)
+	response, err := client.
+		Search(Index).
+		From(from).
+		Size(size).
+		Query(query).
+		Pretty(true).
+		Do(ctx)
 
 	if err != nil || response.TotalHits() == 0 {
 		return matches, err
 	}
 
-    if response.Hits.TotalHits > 0 {
-        for _, hit := range response.Hits.Hits {
-            var r Recipe
-            err := json.Unmarshal(*hit.Source, &r)
+	if response.Hits.TotalHits > 0 {
+		for _, hit := range response.Hits.Hits {
+			var r Recipe
+			err := json.Unmarshal(*hit.Source, &r)
 
-            if err != nil {
-                return nil, err
-            }
+			if err != nil {
+				return nil, err
+			}
 
-            matches = append(matches, r)
-        }
-    }
+			matches = append(matches, r)
+		}
+	}
 
-    return
+	return
 }
