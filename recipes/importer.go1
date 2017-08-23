@@ -1,0 +1,15 @@
+package recipes
+
+// Categories are a recipe taxonomy
+type Categories struct {
+	Data []struct {
+		ID       string `json:"id"`
+		Slug     string `json:"slug"`
+		Title    string `json:"title"`
+		Children []struct {
+			ID    string `json:"id"`
+			Slug  string `json:"slug"`
+			Title string `json:"title"`
+		} `json:"children,omitempty"`
+	} `json:"data"`
+}
