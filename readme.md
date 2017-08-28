@@ -24,7 +24,7 @@ Accessing local environment
 
 ## Commands
 
-These are accessible after compiling with `go build`.
+    cd src/github.com/shrwdflrst/cocktailbot/
 
 Import recipes into Elasticsearch:
 
@@ -38,7 +38,7 @@ Running the server
 
     go run site/server.go
 
-Then you can access the site at: `http://127.0.0.1/api/recipes`
+Then you can access the site at: `http://127.0.0.1/`
 
 
 ## References
