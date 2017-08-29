@@ -58,5 +58,16 @@ Then you can access the site at: `http://127.0.0.1/`
 
 ## Testing Elasticsearch
 
-     curl -XGET 'localhost:9200/cocktails/recipe/_search?q=id:861'
-     curl -XGET 'localhost:9200/cocktails/recipe/_search?q=title:"The Casino Cocktail"'
+     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=id:861'
+     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=title:"The Casino Cocktail"'
+
+## Ansible
+
+    # ping all hosts
+    ansible all -m ping -u root -e 'ansible_python_interpreter=/usr/bin/python3'
+    ansible all -a "/bin/echo hello" -u root -e 'ansible_python_interpreter=/usr/bin/python3'
+
+Setting up server:
+
+    cd resources/ansible
+    ansible-playbook main.yml -i hosts -u root --limit dev

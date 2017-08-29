@@ -1,0 +1,5 @@
+[dev]
+dev_web_1 ansible_host=46.101.82.157
+
+[prod]
+prod_web_1 ansible_host=46.101.82.157

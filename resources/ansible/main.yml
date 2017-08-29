@@ -1,0 +1,52 @@
+---
+- hosts: all
+  gather_facts: False
+  pre_tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      register: output
+      changed_when: output.stdout != ""
+    - setup: # aka gather_facts
+  tasks:
+    - group:
+        name: cocktailbot
+        state: present
+
+    - user:
+        name: cocktailbot
+        comment: "Cocktail Bot"
+        group: cocktailbot
+
+    - file:
+        path: /home/cocktailbot/go_workspace
+        state: directory
+        mode: 0755
+
+    - name: Download and install Go
+      get_url:
+        url: https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
+        dest: /home/cocktailbot
+      register: download_go
+
+    - stat:
+        path: /home/cocktailbot/go1.8.linux-amd64.tar.gz
+        checksum_algorithm: sha256
+
+    - unarchive:
+        src: /home/cocktailbot/go1.8.linux-amd64.tar.gz
+        dest: /home/cocktailbot/
+        remote_src: true
+
+    - name: Move Go into place
+      command: mv /home/cocktailbot/go /usr/local creates=/usr/local/go
+
+    - copy:
+        src: files/.bash_profile
+        dest: /home/cocktailbot
+        owner: cocktailbot
+        group: cocktailbot
+        mode: 0644
+
+    - debug:
+        msg="Go was downloaded"
+      when: download_go|changed

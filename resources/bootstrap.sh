@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# The output of all these installation steps is noisy. With this utility
-# the progress report is nice and concise.
-
 PATH_SELF=/home/ubuntu/go_workspace/src/github.com/shrwdflrst/cocktailbot
 
 function install {
