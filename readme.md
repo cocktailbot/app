@@ -58,8 +58,10 @@ Then you can access the site at: `http://127.0.0.1/`
 
 ## Testing Elasticsearch
 
-     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=id:861'
-     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=title:"The Casino Cocktail"'
+    # check logs
+    sudo journalctl --unit elasticsearch
+    curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=id:861'
+    curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=title:"The Casino Cocktail"'
 
 ## Ansible
 
