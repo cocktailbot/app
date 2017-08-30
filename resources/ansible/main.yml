@@ -2,7 +2,7 @@
 - hosts: all
   gather_facts: False
   pre_tasks:
-    - name: Install python for Ansible
+    - name: Install Python for Ansible
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       register: output
       changed_when: output.stdout != ""
@@ -12,7 +12,8 @@
         name: cocktailbot
         state: present
 
-    - user:
+    - name: Create default user
+      user:
         name: cocktailbot
         comment: "Cocktail Bot"
         group: cocktailbot
@@ -32,7 +33,8 @@
         path: /home/cocktailbot/go1.8.linux-amd64.tar.gz
         checksum_algorithm: sha256
 
-    - unarchive:
+    - name: Extract Go
+      unarchive:
         src: /home/cocktailbot/go1.8.linux-amd64.tar.gz
         dest: /home/cocktailbot/
         remote_src: true
@@ -40,12 +42,27 @@
     - name: Move Go into place
       command: mv /home/cocktailbot/go /usr/local creates=/usr/local/go
 
-    - copy:
+    - name: Move bash_profile
+      copy:
         src: files/.bash_profile
         dest: /home/cocktailbot
         owner: cocktailbot
         group: cocktailbot
         mode: 0644
+
+    - apt_repository:
+        repo: 'ppa:webupd8team/java'
+        update_cache: yes
+
+    - name: Agree to oracle license
+      debconf: name=oracle-java8-installer question=shared/accepted-oracle-license-v1-1 vtype=select value=true
+
+
+    - name: Install Java 8
+      apt:
+        name: oracle-java8-installer
+        state: latest
+        force: yes
 
     - debug:
         msg="Go was downloaded"
