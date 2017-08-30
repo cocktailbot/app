@@ -82,6 +82,9 @@
         src: files/elasticsearch/jvm.options
         dest: /etc/elasticsearch
 
+    - name: Create swap file
+      command: fallocate -l 1G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile && echo '/swapfile none swap defaults 0 0' >> /etc/fstab creates=/swapfile
+
     - service:
         name: elasticsearch
         enabled: yes

@@ -41,7 +41,8 @@ function install_elasticsearch {
     sudo dpkg -i elasticsearch-5.5.1.deb
 
     sudo systemctl enable elasticsearch.service
-    sudo cp -f ${PATH_SELF}/resources/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+    sudo cp -f ${PATH_SELF}/resources/ansible/files/elasticsearch/elasticsearch.yml /etc/elasticsearch/
+    sudo cp -f ${PATH_SELF}/resources/ansible/files/elasticsearch/jvm.options /etc/elasticsearch/
     sudo systemctl restart elasticsearch
 }
 
@@ -70,6 +71,6 @@ mkdir -p /home/ubuntu/go_workspace/src/github.com/shrwdflrst/cocktailbot
 chown -R ubuntu:ubuntu /home/ubuntu/go_workspace
 
 # install packages
-sudo -u ubuntu /usr/local/go/bin/go get gopkg.in/olivere/elastic.v5
+# sudo -u ubuntu /usr/local/go/bin/go get gopkg.in/olivere/elastic.v5
 
 echo "Finished!"
