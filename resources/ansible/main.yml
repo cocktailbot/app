@@ -23,7 +23,7 @@
         state: directory
         mode: 0755
 
-    - name: Download and install Go
+    - name: Download Go
       get_url:
         url: https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
         dest: /home/cocktailbot
@@ -57,12 +57,35 @@
     - name: Agree to oracle license
       debconf: name=oracle-java8-installer question=shared/accepted-oracle-license-v1-1 vtype=select value=true
 
-
     - name: Install Java 8
       apt:
         name: oracle-java8-installer
         state: latest
         force: yes
+
+    - apt_key: url=https://artifacts.elastic.co/GPG-KEY-elasticsearch state=present
+
+    - apt_repository:
+        repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
+        update_cache: yes
+
+    - name: Install Elasticsearch
+      apt:
+        name: elasticsearch
+        state: latest
+
+    - copy:
+        src: files/elasticsearch/elasticsearch.yml
+        dest: /etc/elasticsearch
+
+    - copy:
+        src: files/elasticsearch/jvm.options
+        dest: /etc/elasticsearch
+
+    - service:
+        name: elasticsearch
+        enabled: yes
+        state: started
 
     - debug:
         msg="Go was downloaded"
