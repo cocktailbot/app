@@ -48,6 +48,7 @@ Then you can access the site at: `http://127.0.0.1/`
 - https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-16-04
 - https://github.com/olivere/elastic/wiki
 - https://github.com/olivere/elastic/issues/525
+- https://serverfault.com/questions/112795/how-to-run-a-server-on-port-80-as-a-normal-user-on-linux
 
 ## Go docs & utilities
 

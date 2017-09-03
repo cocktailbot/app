@@ -12,17 +12,33 @@
         name: cocktailbot
         state: present
 
+    - group:
+        name: cocktailbot-www
+        state: present
+
     - name: Create default user
       user:
         name: cocktailbot
         comment: "Cocktail Bot"
         group: cocktailbot
+        state: present
+
+    - name: Create www user
+      user:
+        name: cocktailbot-www
+        comment: "Cocktail Bot"
+        group: cocktailbot-www
 
     - file:
-        path: /home/cocktailbot/go_workspace
+        path: /home/cocktailbot/go_workspace/{{ item }}
         state: directory
         owner: cocktailbot
+        group: cocktailbot
         mode: 0755
+      with_items:
+        - 'bin'
+        - 'src'
+        - 'pkg'
 
     - name: Download Go
       get_url:
@@ -72,13 +88,13 @@
         name: elasticsearch
         state: latest
 
-    - copy:
-        src: files/elasticsearch/elasticsearch.yml
+    - name: Copy Elasticsearch config
+      copy:
+        src: files/elasticsearch/{{ item }}
         dest: /etc/elasticsearch
-
-    - copy:
-        src: files/elasticsearch/jvm.options
-        dest: /etc/elasticsearch
+      with_items:
+        - elasticsearch.yml
+        - jvm.options
 
     - name: Create swap file
       shell: |
@@ -102,10 +118,45 @@
 
     - name: Install app
       shell: |
-        . /home/cocktailbot/.bash_profile
-        go get -d -u github.com/ShrwdFlrst/cocktailbot/...
+        . ~/.bash_profile;
+        go get -d -u github.com/shrwdflrst/cocktailbot/...;
+        cd ~/go_workspace/src/github.com/shrwdflrst/cocktailbot;
+        go run importer/cocktail.go --recipes resources/data/recipes.json;
+        (cd ~/go_workspace/src/github.com/shrwdflrst/cocktailbot/site; go build server.go);
       become: yes
       become_user: cocktailbot
+
+    - name: Build app
+      shell: |
+        . ~/.bash_profile;
+        (cd ~/go_workspace/src/github.com/shrwdflrst/cocktailbot/site; go build server.go);
+      become: yes
+      become_user: cocktailbot
+
+    - file:
+        path: /var/log/webhook
+        state: directory
+        owner: cocktailbot-www
+        group: cocktailbot-www
+        mode: 0755
+
+    - name: Install Supervisord
+      apt:
+        name: supervisor
+        force: yes
+
+    - name: Move Supervisord config
+      copy:
+        src: files/supervisor/{{ item }}
+        dest: /etc/supervisor/{{ item }}
+      with_items:
+        - supervisord.conf
+        - conf.d/webhooks.conf
+
+    - service:
+        name: supervisor
+        enabled: yes
+        state: restarted
 
     - debug:
         msg="Go was downloaded"

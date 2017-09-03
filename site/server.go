@@ -20,7 +20,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serveTemplate(w, r, "index.html")
+	serveTemplate(w, r, "/index.html")
 }
 
 func recipes(w http.ResponseWriter, r *http.Request) {
@@ -45,8 +45,11 @@ func main() {
 }
 
 func serveTemplate(w http.ResponseWriter, r *http.Request, path string) {
+
 	lp := filepath.Join(prefix, "templates", "layout.html")
 	fp := filepath.Join(prefix, "templates", filepath.Clean(path))
+	log.Println("Serving: " + filepath.Clean(path))
+	log.Println(fp)
 
 	// Return a 404 if the template doesn't exist
 	info, err := os.Stat(fp)
