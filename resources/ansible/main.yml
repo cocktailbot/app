@@ -159,7 +159,6 @@
         state: restarted
 
     # https://serverfault.com/questions/112795/how-to-run-a-server-on-port-80-as-a-normal-user-on-linux
-    # Forward port 80 to 8600
     - iptables:
         table: nat
         chain: PREROUTING
@@ -170,7 +169,7 @@
         to_ports: 8080
         comment: Redirect web traffic to port 8600
       become: yes
-      
+
     - debug:
         msg="Go was downloaded"
       when: download_go|changed
