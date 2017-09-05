@@ -15,8 +15,8 @@ type Application struct {
 // Prefix path for template location
 const Prefix = "./resources/"
 
-// View tries to write html template, or throw 404 if not found
-func (c Application) View(w http.ResponseWriter, r *http.Request, path string, data interface{}) {
+// Render tries to write html template, or throw 404 if not found
+func (c Application) Render(w http.ResponseWriter, r *http.Request, path string, data interface{}) {
 
 	lp := filepath.Join(Prefix, "templates", "layout.html")
 	fp := filepath.Join(Prefix, "templates", "/pages/"+filepath.Clean(path))

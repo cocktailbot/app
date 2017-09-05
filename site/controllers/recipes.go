@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	// SearchPath points to search results page
+	// RecipesSearchPath points to search results page
 	RecipesSearchPath = "/search"
-	// DetailPath points to details for a recipe
+	// RecipesDetailPath points to details for a recipe
 	RecipesDetailPath = "/recipes/"
 )
 
@@ -26,17 +26,16 @@ func (controller Recipes) Search(w http.ResponseWriter, r *http.Request) {
 	results, e := search.ByIngredient(query["ingredients"], 0, 10)
 	err.Check(e)
 	data := map[string]interface{}{
-		"Test":        "oh hello",
 		"Results":     results,
 		"Ingredients": strings.Join(query["ingredients"], ","),
 	}
 
-	controller.View(w, r, "search.html", data)
+	controller.Render(w, r, "search.html", data)
 }
 
 // Detail page for one recipe
 func (controller Recipes) Detail(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Path[len("/recipes/"):]
+	id := r.URL.Path[len(RecipesDetailPath):]
 	recipe, e := search.Get(id)
 	err.Check(e)
 
@@ -49,5 +48,5 @@ func (controller Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 		"Recipe": recipe,
 	}
 
-	controller.View(w, r, "recipes/index.html", data)
+	controller.Render(w, r, "recipes/index.html", data)
 }
