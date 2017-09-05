@@ -37,6 +37,17 @@ func pageSearch(w http.ResponseWriter, r *http.Request) {
 	serveTemplate(w, r, "search.html", data)
 }
 
+func pageRecipesDetail(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Path[len("/recipes/"):]
+	recipe, e := search.Get(id)
+	err.Check(e)
+	data := map[string]interface{}{
+		"Recipe": recipe,
+	}
+
+	serveTemplate(w, r, "recipes/index.html", data)
+}
+
 func apiRecipes(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
@@ -52,6 +63,7 @@ func main() {
 	fs := http.FileServer(http.Dir(prefix + "static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	http.HandleFunc("/recipes/", pageSearch)
 	http.HandleFunc("/search", pageSearch)
 	http.HandleFunc("/", pageHome)
 

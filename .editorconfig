@@ -1,7 +1,10 @@
 # top-most EditorConfig file
 root = true
 
-# 4 space indentation
 [*.yml]
 indent_style = space
 indent_size = 2
+
+[*.html]
+indent_style = space
+indent_size = 4
