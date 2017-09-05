@@ -9,20 +9,20 @@
     </form>
 
     <table id="results">
-        {{ range $index, $recipe := .Results }}
+        {{range $index, $recipe := .Results}}
             <tr>
                 <td>
                     {{$recipe.ID}}
                 </td>
                 <td>
-                    {{$recipe.Title}}
+                    <a href="/recipes/{{$recipe.ID}}">{{$recipe.Title}}</a>
                 </td>
                 </td>
                 <td>
                     <ul>
-                        {{ range $i, $ingredient := (index $recipe.Ingredients 0).List }}
+                        {{range $i, $ingredient := (index $recipe.Ingredients 0).List}}
                             <li>{{$ingredient.Amount}} {{$ingredient.Ingredient}}</li>
-                        {{ end }}
+                        {{end}}
                     </ul>
                 </td>
             </tr>
