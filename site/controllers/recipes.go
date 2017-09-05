@@ -8,6 +8,13 @@ import (
 	"github.com/shrwdflrst/cocktailbot/search"
 )
 
+const (
+	// SearchPath points to search results page
+	RecipesSearchPath = "/search"
+	// DetailPath points to details for a recipe
+	RecipesDetailPath = "/recipes/"
+)
+
 // Recipes controller
 type Recipes struct {
 	Application
@@ -24,7 +31,7 @@ func (controller Recipes) Search(w http.ResponseWriter, r *http.Request) {
 		"Ingredients": strings.Join(query["ingredients"], ","),
 	}
 
-	controller.Application.View(w, r, "search.html", data)
+	controller.View(w, r, "search.html", data)
 }
 
 // Detail page for one recipe

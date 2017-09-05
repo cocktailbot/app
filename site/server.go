@@ -25,11 +25,12 @@ func main() {
 	fs := http.FileServer(http.Dir(controllers.Prefix + "static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	http.HandleFunc("/recipes/", func(w http.ResponseWriter, r *http.Request) {
-		controllers.Recipes.Detail(w, r)
-	})
-	// http.HandleFunc("/search", controllers.Recipes.Search)
-	// http.HandleFunc(controllers.HomePath, controllers.Home)
+	recipes := new(controllers.Recipes)
+	home := new(controllers.Home)
+
+	http.HandleFunc(controllers.RecipesDetailPath, recipes.Detail)
+	http.HandleFunc(controllers.RecipesSearchPath, recipes.Search)
+	http.HandleFunc(controllers.HomePath, home.Index)
 
 	log.Println("Listening...")
 	http.ListenAndServe(":8080", nil)
