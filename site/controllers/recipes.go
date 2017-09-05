@@ -21,12 +21,11 @@ type Recipes struct {
 }
 
 // Search page
-func (controller Recipes) Search(w http.ResponseWriter, r *http.Request) {
-	ingredients := controller.Param("ingredients", r, "")
-	size := controller.ParamInt("page", r, 10)
-	page := controller.ParamInt("page", r, 1)
+func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
+	ingredients := c.Param("ingredients", r, "")
+	size := c.ParamInt("per_page", r, 10)
+	page := c.ParamInt("page", r, 1)
 	page = (page - 1) * size
-
 	if page < 0 {
 		page = 0
 	}
@@ -38,11 +37,11 @@ func (controller Recipes) Search(w http.ResponseWriter, r *http.Request) {
 		"Ingredients": ingredients,
 	}
 
-	controller.Render(w, r, "search.html", data)
+	c.Render(w, r, "search.html", data)
 }
 
 // Detail page for one recipe
-func (controller Recipes) Detail(w http.ResponseWriter, r *http.Request) {
+func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Path[len(RecipesDetailPath):]
 	recipe, e := search.Get(id)
 	err.Check(e)
@@ -56,5 +55,5 @@ func (controller Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 		"Recipe": recipe,
 	}
 
-	controller.Render(w, r, "recipes/index.html", data)
+	c.Render(w, r, "recipes/index.html", data)
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,8 +18,18 @@ type Application struct {
 // Prefix path for template location
 const Prefix = "./resources/"
 
+// JSON return data as json response
+func (a Application) JSON(w http.ResponseWriter, r *http.Request, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
+}
+
 // Render tries to write html template, or throw 404 if not found
 func (a Application) Render(w http.ResponseWriter, r *http.Request, path string, data interface{}) {
+	if r.Header.Get("Accept") == "application/json" {
+		a.JSON(w, r, data)
+		return
+	}
 
 	lp := filepath.Join(Prefix, "templates", "layout.html")
 	fp := filepath.Join(Prefix, "templates", "/pages/"+filepath.Clean(path))
