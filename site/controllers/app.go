@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 // Application container
@@ -16,7 +18,7 @@ type Application struct {
 const Prefix = "./resources/"
 
 // Render tries to write html template, or throw 404 if not found
-func (c Application) Render(w http.ResponseWriter, r *http.Request, path string, data interface{}) {
+func (a Application) Render(w http.ResponseWriter, r *http.Request, path string, data interface{}) {
 
 	lp := filepath.Join(Prefix, "templates", "layout.html")
 	fp := filepath.Join(Prefix, "templates", "/pages/"+filepath.Clean(path))
@@ -49,4 +51,25 @@ func (c Application) Render(w http.ResponseWriter, r *http.Request, path string,
 		log.Println(err.Error())
 		http.Error(w, http.StatusText(500), 500)
 	}
+}
+
+// Param return query parameter or default
+func (a Application) Param(param string, r *http.Request, def string) (value string) {
+	query := r.URL.Query()
+	if query[param] == nil {
+		query[param] = []string{def}
+	}
+
+	return strings.Join(query[param], ",")
+}
+
+// ParamInt something
+func (a Application) ParamInt(param string, r *http.Request, def int) (value int) {
+	str := a.Param(param, r, string(def))
+	i, e := strconv.ParseInt(str, 10, 32)
+	if e != nil {
+		return def
+	}
+
+	return int(i)
 }

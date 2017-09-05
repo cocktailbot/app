@@ -22,12 +22,20 @@ type Recipes struct {
 
 // Search page
 func (controller Recipes) Search(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
-	results, e := search.ByIngredient(query["ingredients"], 0, 10)
+	ingredients := controller.Param("ingredients", r, "")
+	size := controller.ParamInt("page", r, 10)
+	page := controller.ParamInt("page", r, 1)
+	page = (page - 1) * size
+
+	if page < 0 {
+		page = 0
+	}
+
+	results, e := search.ByIngredient(strings.Split(ingredients, ","), int(page), int(size))
 	err.Check(e)
 	data := map[string]interface{}{
 		"Results":     results,
-		"Ingredients": strings.Join(query["ingredients"], ","),
+		"Ingredients": ingredients,
 	}
 
 	controller.Render(w, r, "search.html", data)
