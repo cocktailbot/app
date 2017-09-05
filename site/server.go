@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/shrwdflrst/cocktailbot/err"
 	"github.com/shrwdflrst/cocktailbot/search"
@@ -14,16 +15,29 @@ import (
 
 const prefix = "./resources/"
 
-func home(w http.ResponseWriter, r *http.Request) {
+func pageHome(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
-	serveTemplate(w, r, "/index.html")
+	serveTemplate(w, r, "index.html", nil)
 }
 
-func recipes(w http.ResponseWriter, r *http.Request) {
+func pageSearch(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	results, e := search.ByIngredient(query["ingredients"], 0, 10)
+	err.Check(e)
+	data := map[string]interface{}{
+		"Test":        "oh hello",
+		"Results":     results,
+		"Ingredients": strings.Join(query["ingredients"], ","),
+	}
+
+	serveTemplate(w, r, "search.html", data)
+}
+
+func apiRecipes(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
 	w.Header().Set("Content-Type", "application/json")
@@ -33,23 +47,22 @@ func recipes(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/api/recipes", recipes)
+	http.HandleFunc("/api/recipes", apiRecipes)
 
 	fs := http.FileServer(http.Dir(prefix + "static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	http.HandleFunc("/", home)
+	http.HandleFunc("/search", pageSearch)
+	http.HandleFunc("/", pageHome)
 
 	log.Println("Listening...")
 	http.ListenAndServe(":8080", nil)
 }
 
-func serveTemplate(w http.ResponseWriter, r *http.Request, path string) {
+func serveTemplate(w http.ResponseWriter, r *http.Request, path string, data interface{}) {
 
 	lp := filepath.Join(prefix, "templates", "layout.html")
-	fp := filepath.Join(prefix, "templates", filepath.Clean(path))
-	log.Println("Serving: " + filepath.Clean(path))
-	log.Println(fp)
+	fp := filepath.Join(prefix, "templates", "/pages/"+filepath.Clean(path))
 
 	// Return a 404 if the template doesn't exist
 	info, err := os.Stat(fp)
@@ -75,7 +88,7 @@ func serveTemplate(w http.ResponseWriter, r *http.Request, path string) {
 		return
 	}
 
-	if err := tmpl.ExecuteTemplate(w, "layout", nil); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		log.Println(err.Error())
 		http.Error(w, http.StatusText(500), 500)
 	}

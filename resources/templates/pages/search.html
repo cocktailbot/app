@@ -1,0 +1,31 @@
+{{define "title"}}Search{{end}}
+
+{{define "body"}}
+    <h1>Search</h1>
+
+    <form action="/search" method="GET">
+        <input type="text" id="ingredients" name="ingredients" placeholder="apple, lemon, etc" value="{{.Ingredients}}" />
+        <button id="search">Search</button>
+    </form>
+
+    <table id="results">
+        {{ range $index, $recipe := .Results }}
+            <tr>
+                <td>
+                    {{$recipe.ID}}
+                </td>
+                <td>
+                    {{$recipe.Title}}
+                </td>
+                </td>
+                <td>
+                    <ul>
+                        {{ range $i, $ingredient := (index $recipe.Ingredients 0).List }}
+                            <li>{{$ingredient.Amount}} {{$ingredient.Ingredient}}</li>
+                        {{ end }}
+                    </ul>
+                </td>
+            </tr>
+        {{ end }}
+    </table>
+{{end}}
