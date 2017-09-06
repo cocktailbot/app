@@ -1,37 +1,67 @@
 {
-    "id":"861",
-    "title":"The Casino Cocktail",
-    "categories":[
-        {"id":"36","title":"Gin"},
-        {"id":"751","title":"Liqueur"},
-        {"id":"756","title":"Maraschino liqueur"}
-    ],
-    "difficultyRating":"2",
-    "recipeTimes":[
-        {"title":"Preparation","time":"3"}
-    ],
-    "totalTime":"3",
-    "description":"<p>This cocktail will be vastly appreciated by all the gin-lovers out there who enjoy their favourite spirit straight, or with only a touch of extra flair so that it doesn\u2019t mask the taste of gin\u2019s herbal essence.\u00a0<\/p>",
-    "ingredients":[
-        {
-            "title":"Ingredients",
-            "list":[
-                {"amount":"30ml","ingredient":"gin","notes":""},
-                {"amount":"4ml","ingredient":"lemon juice","notes":""},
-                {"amount":"4ml","ingredient":"maraschino liqueur","notes":""},
-                {"amount":"2 dashes","ingredient":"orange bitters","notes":""},
-                {"amount":"1","ingredient":"maraschino cherry","notes":"optional"}]
-        }
-    ],
-    "methods":[
-        {
-            "title":"Method",
-            "list":[
-                {"step":"Place the gin, maraschino liqueur, lemon juice and bitters into a cocktail shaker filled with ice."},
-                {"step":"Vigorously shake the mixture for about 10 seconds."},
-                {"step":"Strain into a cocktail glass."},
-                {"step":"Garnish the drink with a cherry."}
-            ]
-        }
-    ]
-}
+	"data": [{
+		"id": "2911",
+		"slug": "2911-alaska",
+		"title": "Alaska",
+		"categories": [{
+				"id": "36",
+				"title": "Gin",
+				"slug": "gin"
+			},
+			{
+				"id": "751",
+				"title": "Liqueur",
+				"slug": "liqueur"
+			}
+		],
+		"difficultyRating": "2",
+		"recipeTimes": [{
+			"title": "Preparation",
+			"time": "2"
+		}],
+		"totalTime": "2",
+		"serves": "1",
+		"description": "<p>This gin cocktail, made with Yellow Chartreuse and orange bitters, “dances between spirit-driven and citrus-forward,” according to Keli Rivers of San Francisco’s Whitechapel. “It’s good, moving from one side of the spectrum to the other.”</p>",
+		"ingredients": [{
+			"title": "Ingredients",
+			"list": [{
+					"amount": "45ml",
+					"ingredient": "gin",
+					"notes": ""
+				},
+				{
+					"amount": "15ml",
+					"ingredient": "Yellow Chartreuse",
+					"notes": ""
+				},
+				{
+					"amount": "1 dash",
+					"ingredient": "orange bitters",
+					"notes": ""
+				},
+				{
+					"amount": "",
+					"ingredient": "Lemon peel",
+					"notes": "to garnish"
+				},
+				{
+					"amount": "",
+					"ingredient": "Ice",
+					"notes": ""
+				}
+			]
+		}],
+		"methods": [{
+			"title": "Method",
+			"list": [{
+					"step": "Add all of the ingredients to a mixing glass with ice, and stir until chilled."
+				},
+				{
+					"step": "Strain into a chilled coupe glass."
+				},
+				{
+					"step": "Express the oil of a lemon peel over the drink, and garnish with that lemon peel."
+				}
+			]
+		}]
+	}]}

@@ -43,7 +43,8 @@ func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
 
 // Detail page for one recipe
 func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Path[len(RecipesDetailPath):]
+	slug := r.URL.Path[len(RecipesDetailPath):]
+	id := strings.Split(slug, "-")[0]
 	recipe, e := search.Get(id)
 	err.Check(e)
 

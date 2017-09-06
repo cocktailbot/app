@@ -12,10 +12,7 @@
         {{range $index, $recipe := .Results}}
             <tr>
                 <td>
-                    {{$recipe.ID}}
-                </td>
-                <td>
-                    <a href="/recipes/{{$recipe.ID}}">{{$recipe.Title}}</a>
+                    <a href="/recipes/{{$recipe.Slug}}">{{$recipe.Title}}</a>
                 </td>
                 </td>
                 <td>
