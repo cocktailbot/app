@@ -109,6 +109,26 @@ func Save(recipes Recipes) error {
 	return nil
 }
 
+// Get returns a recipe by id
+func Get(id string) (recipe Recipe, err error) {
+	ctx := context.Background()
+	client, err := elastic.NewClient()
+
+	if err != nil {
+		return recipe, err
+	}
+
+	response, err := client.Get().Index(Index).Id(id).Do(ctx)
+
+	if err != nil || response.Found == false {
+		return recipe, err
+	}
+
+	err = json.Unmarshal(*response.Source, &recipe)
+
+	return recipe, err
+}
+
 // ByIngredient search for recipes matching the terms
 func ByIngredient(values []string, from int, size int) (matches []Recipe, err error) {
 	ctx := context.Background()
