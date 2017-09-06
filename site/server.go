@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/shrwdflrst/cocktailbot/err"
-	"github.com/shrwdflrst/cocktailbot/search"
-	"github.com/shrwdflrst/cocktailbot/site/controllers"
+	"github.com/cocktailbot/app/err"
+	"github.com/cocktailbot/app/search"
+	"github.com/cocktailbot/app/site/controllers"
 )
 
 func apiRecipes(w http.ResponseWriter, r *http.Request) {

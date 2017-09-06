@@ -11,10 +11,12 @@ import (
 // Recipe represents cocktail recipe
 type Recipe struct {
 	ID         string `json:"id"`
+	Slug       string `json:"slug"`
 	Title      string `json:"title"`
 	Categories []struct {
 		ID    string `json:"id"`
 		Title string `json:"title"`
+		Slug  string `json:"slug"`
 	} `json:"categories"`
 	DifficultyRating string `json:"difficultyRating"`
 	RecipeTimes      []struct {
@@ -22,6 +24,7 @@ type Recipe struct {
 		Time  string `json:"time"`
 	} `json:"recipeTimes"`
 	TotalTime   string `json:"totalTime"`
+	Serves      string `json:"serves"`
 	Description string `json:"description"`
 	Ingredients []struct {
 		Title string `json:"title"`

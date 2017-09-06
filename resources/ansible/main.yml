@@ -119,17 +119,17 @@
     - name: Install app
       shell: |
         . ~/.bash_profile;
-        go get -d -u github.com/shrwdflrst/cocktailbot/...;
-        cd ~/go_workspace/src/github.com/shrwdflrst/cocktailbot;
+        go get -d -u github.com/cocktailbot/app/...;
+        cd ~/go_workspace/src/github.com/cocktailbot/app;
         go run importer/cocktail.go --recipes resources/data/recipes.json;
-        (cd ~/go_workspace/src/github.com/shrwdflrst/cocktailbot/site; go build server.go);
+        (cd ~/go_workspace/src/github.com/cocktailbot/app/site; go build server.go);
       become: yes
       become_user: cocktailbot
 
     - name: Build app
       shell: |
         . ~/.bash_profile;
-        (cd ~/go_workspace/src/github.com/shrwdflrst/cocktailbot/site; go build server.go);
+        (cd ~/go_workspace/src/github.com/cocktailbot/app/site; go build server.go);
       become: yes
       become_user: cocktailbot
 
