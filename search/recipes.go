@@ -118,7 +118,7 @@ func Get(id string) (recipe Recipe, err error) {
 		return recipe, err
 	}
 
-	response, err := client.Get().Id(id).Do(ctx)
+	response, err := client.Get().Index(Index).Id(id).Do(ctx)
 
 	if err != nil || response.Found == false {
 		return recipe, err

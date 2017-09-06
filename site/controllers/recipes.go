@@ -22,9 +22,10 @@ type Recipes struct {
 
 // Search page
 func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
-	ingredients := c.Param("ingredients", r, "")
-	size := c.ParamInt("per_page", r, 10)
-	page := c.ParamInt("page", r, 1)
+	query := r.URL.Query()
+	ingredients := c.Param("ingredients", query, "")
+	size := c.ParamInt("per_page", query, 10)
+	page := c.ParamInt("page", query, 1)
 	page = (page - 1) * size
 	if page < 0 {
 		page = 0
@@ -55,5 +56,5 @@ func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 		"Recipe": recipe,
 	}
 
-	c.Render(w, r, "recipes/index.html", data)
+	c.Render(w, r, "/recipes/index.html", data)
 }

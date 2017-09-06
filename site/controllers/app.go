@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -65,8 +66,7 @@ func (a Application) Render(w http.ResponseWriter, r *http.Request, path string,
 }
 
 // Param return query parameter or default
-func (a Application) Param(param string, r *http.Request, def string) (value string) {
-	query := r.URL.Query()
+func (a Application) Param(param string, query url.Values, def string) (value string) {
 	if query[param] == nil {
 		query[param] = []string{def}
 	}
@@ -75,8 +75,8 @@ func (a Application) Param(param string, r *http.Request, def string) (value str
 }
 
 // ParamInt something
-func (a Application) ParamInt(param string, r *http.Request, def int) (value int) {
-	str := a.Param(param, r, string(def))
+func (a Application) ParamInt(param string, query url.Values, def int) (value int) {
+	str := a.Param(param, query, string(def))
 	i, e := strconv.ParseInt(str, 10, 32)
 	if e != nil {
 		return def
