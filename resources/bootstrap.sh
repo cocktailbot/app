@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-PATH_SELF=/home/ubuntu/go_workspace/src/github.com/shrwdflrst/cocktailbot
+PATH_SELF=/home/ubuntu/go_workspace/src/github.com/cocktailbot/app
 
 function install {
     echo installing $1
@@ -67,7 +67,7 @@ install_elasticsearch
 cp ${PATH_SELF}/resources/.bash_profile /home/ubuntu
 chown ubuntu:ubuntu /home/ubuntu/.bash_profile
 mkdir -p /home/ubuntu/go_workspace/{pkg,bin}
-mkdir -p /home/ubuntu/go_workspace/src/github.com/shrwdflrst/cocktailbot
+mkdir -p /home/ubuntu/go_workspace/src/github.com/cocktailbot/app
 chown -R ubuntu:ubuntu /home/ubuntu/go_workspace
 
 # install packages

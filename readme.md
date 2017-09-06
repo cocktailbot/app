@@ -1,6 +1,6 @@
 # Cocktailbot.recipes
 
-Place this folder into `$YOUR_GO_WORKSPACE/src/github.com/shrwdflrst/cocktailbot`
+Place this folder into `$YOUR_GO_WORKSPACE/src/github.com/cocktailbot/app`
 
 ## Local environment
 
@@ -24,7 +24,7 @@ Accessing local environment
 
 ## Commands
 
-    cd src/github.com/shrwdflrst/cocktailbot/
+    cd src/github.com/cocktailbot/app/
 
 Import recipes into Elasticsearch:
 

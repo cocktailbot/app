@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/shrwdflrst/cocktailbot/err"
-	"github.com/shrwdflrst/cocktailbot/search"
+	"github.com/cocktailbot/app/err"
+	"github.com/cocktailbot/app/search"
 )
 
 const (

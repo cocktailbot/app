@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shrwdflrst/cocktailbot/err"
-	"github.com/shrwdflrst/cocktailbot/json"
-	"github.com/shrwdflrst/cocktailbot/search"
+	"github.com/cocktailbot/app/err"
+	"github.com/cocktailbot/app/json"
+	"github.com/cocktailbot/app/search"
 )
 
 const argrcp = "--recipes"
