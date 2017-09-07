@@ -3,94 +3,53 @@ package search
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
-// Index for storing cocktail recipes
-var Index = "cocktails"
+// RecipeType that denotes one recipe
+var RecipeType = "recipe"
 
-// Typ that denotes one recipe
-var Typ = "recipe"
-
-// Save items into a new index with a type
-func Save(items Collection, index string, tp string) error {
-	ctx := context.Background()
-	client, err := elastic.NewClient()
-
-	if err != nil {
-		return err
-	}
-
-	exists, err := client.IndexExists(index).Do(ctx)
-
-	if err != nil {
-		return err
-	}
-	if exists {
-		client.DeleteIndex(index).Do(ctx)
-	}
-
-	indexParams := fmt.Sprintf(`{
-			"mappings":{
-				%s:{
-					"properties": {
-
-					}
-				}
-			}
-		}`, tp)
-
-	// Create an index
-	_, err = client.CreateIndex(index).BodyString(indexParams).Do(ctx)
-
-	if err != nil {
-		return err
-	}
-
-	bulkRequest := client.Bulk()
-
-	for i := 0; i < len(items.Data()); i++ {
-		item := items.Data()[i]
-		indexReq := elastic.
-			NewBulkIndexRequest().
-			Index(index).
-			Type(tp).
-			Id(string(item.ID())).
-			Doc(item)
-		bulkRequest = bulkRequest.Add(indexReq)
-	}
-
-	res, err := bulkRequest.Do(ctx)
-
-	fmt.Printf("Indexed items %d\n", len(res.Indexed()))
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+// Recipe represents cocktail recipe
+type Recipe struct {
+	BaseIndexable
+	Slug       string `json:"slug"`
+	Title      string `json:"title"`
+	Categories []struct {
+		ID    string `json:"id"`
+		Title string `json:"title"`
+		Slug  string `json:"slug"`
+	} `json:"categories"`
+	DifficultyRating string `json:"difficultyRating"`
+	RecipeTimes      []struct {
+		Title string `json:"title"`
+		Time  string `json:"time"`
+	} `json:"recipeTimes"`
+	TotalTime   string `json:"totalTime"`
+	Serves      string `json:"serves"`
+	Description string `json:"description"`
+	Ingredients []struct {
+		Title string `json:"title"`
+		List  []struct {
+			Amount     string `json:"amount"`
+			Ingredient string `json:"ingredient"`
+			Notes      string `json:"notes"`
+		} `json:"list"`
+	} `json:"ingredients"`
+	Methods []struct {
+		Title string `json:"title"`
+		List  []struct {
+			Step string `json:"step"`
+		} `json:"list"`
+	} `json:"methods"`
+	Search string `json:"search"`
 }
 
-// Get returns a recipe by id
-func Get(id string) (recipe Recipe, err error) {
-	ctx := context.Background()
-	client, err := elastic.NewClient()
-
-	if err != nil {
-		return recipe, err
-	}
-
-	response, err := client.Get().Index(Index).Id(id).Do(ctx)
-
-	if err != nil || response.Found == false {
-		return recipe, err
-	}
-
-	err = json.Unmarshal(*response.Source, &recipe)
-
-	return recipe, err
+// Recipes represents a collection of recipes
+type Recipes struct {
+	BaseCollection
+	Data []Recipe `json:"data"`
+	Meta Meta     `json:"meta"`
 }
 
 // ByIngredient search for recipes matching the terms

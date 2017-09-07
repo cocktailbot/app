@@ -10,6 +10,7 @@ import (
 )
 
 const argrcp = "--recipes"
+const argcat = "--categories"
 const argsrch = "--search"
 
 func main() {
@@ -23,7 +24,12 @@ func main() {
 
 	if name == argrcp {
 		path := args[1]
-		impr(path)
+		recipes := new(search.Recipes)
+		imprt(path, recipes, search.RecipeType)
+	} else if name == argcat {
+		path := args[1]
+		categories := new(search.Categories)
+		imprt(path, categories, search.CategoryType)
 	} else if name == argsrch {
 		terms := args[1:]
 		results, e := search.ByIngredient(terms, 0, 10)
@@ -32,11 +38,11 @@ func main() {
 	}
 }
 
-func impr(path string) {
-	var recipes search.Recipes
-	e := json.Parse(path, &recipes)
+func imprt(path string, items search.Collection, tp string) {
+	e := json.Parse(path, &items)
 	err.Check(e)
-	e = search.Save(recipes)
+
+	e = search.Save(items, search.Index, tp)
 	err.Check(e)
 }
 
@@ -44,5 +50,6 @@ func help() {
 	fmt.Println("No arguments supplied")
 	fmt.Println("\nExamples:")
 	fmt.Println(" --recipes PATH_TO_RECIPES_JSON")
+	fmt.Println(" --categories PATH_TO_CATEGORIES_JSON")
 	fmt.Println(" --search TERM1 TERM 2...")
 }
