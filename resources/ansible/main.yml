@@ -30,6 +30,14 @@
         group: cocktailbot-www
         state: present
 
+    - name: Allow 'cocktailbot' to `sudo ...` and restart supervisor
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%cocktailbot'
+        line: '%cocktailbot ALL=NOPASSWD:/usr/sbin/service supervisor restart'
+        validate: visudo -cf %s
+
     - file:
         path: /home/cocktailbot/.ssh
         state: directory
