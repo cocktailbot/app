@@ -28,6 +28,22 @@
         name: cocktailbot-www
         comment: "Cocktail Bot"
         group: cocktailbot-www
+        state: present
+
+    - file:
+        path: /home/cocktailbot/.ssh
+        state: directory
+        owner: cocktailbot
+        group: cocktailbot
+        mode: 0700
+
+    - name: Move buddy_ci ssh authorized_keys
+      copy:
+        src: files/buddy_ci_authorized_keys
+        dest: /home/cocktailbot/.ssh/authorized_keys
+        owner: cocktailbot
+        group: cocktailbot
+        mode: 0600
 
     - file:
         path: /home/cocktailbot/go_workspace/{{ item }}
@@ -155,6 +171,11 @@
 
     - service:
         name: supervisor
+        enabled: yes
+        state: restarted
+
+    - service:
+        name: ssh
         enabled: yes
         state: restarted
 
