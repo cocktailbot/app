@@ -35,31 +35,60 @@ type Indexable interface {
 	GetID() string
 }
 
-// BaseIndexable common methods and properties
-type BaseIndexable struct {
-	ID string `json:"id"`
+// CreateIndex with given name
+func CreateIndex(index string) error {
+	ctx := context.Background()
+	client, err := elastic.NewClient()
+	if err != nil {
+		return err
+	}
+
+	exists, err := client.IndexExists(index).Do(ctx)
+
+	if err != nil {
+		return err
+	}
+	if exists {
+		client.DeleteIndex(index).Do(ctx)
+	}
+	_, err = client.CreateIndex(index).Do(ctx)
+
+	return err
 }
 
-// GetID returns unique id
-func (b BaseIndexable) GetID() (id string) {
-	return b.ID
-}
-
-// BaseCollection common methods and properties
-type BaseCollection struct {
-	Data []Indexable `json:"data"`
-}
-
-// GetData returns collection
-func (bc BaseCollection) GetData() []Indexable {
-	return bc.Data
-}
-
-// Save items into a new index with a type
-func Save(items Collection, index string, tp string) error {
+// CreateMapping of type
+func CreateMapping(index string, tp string) error {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
+	if err != nil {
+		return err
+	}
+
+	indexParams := fmt.Sprintf(`{
+		"mappings":{
+			"%s":{
+				"properties": {
+
+				}
+			}
+		}
+	}`, tp)
+	// Create an index
+
+	client.PutMapping().Index(index).BodyString(indexParams).Do(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Save items into a new index with a type
+func Save(items []interface{}, index string, tp string) error {
+	ctx := context.Background()
+	client, err := elastic.NewClient()
 	if err != nil {
 		return err
 	}
@@ -73,32 +102,15 @@ func Save(items Collection, index string, tp string) error {
 		client.DeleteIndex(index).Do(ctx)
 	}
 
-	indexParams := fmt.Sprintf(`{
-			"mappings":{
-				%s:{
-					"properties": {
-
-					}
-				}
-			}
-		}`, tp)
-
-	// Create an index
-	_, err = client.CreateIndex(index).BodyString(indexParams).Do(ctx)
-
-	if err != nil {
-		return err
-	}
-
 	bulkRequest := client.Bulk()
 
-	for i := 0; i < len(items.GetData()); i++ {
-		item := items.GetData()[i]
+	for _, item := range items {
+		id := item.(map[string]interface{})["id"].(string)
 		indexReq := elastic.
 			NewBulkIndexRequest().
 			Index(index).
 			Type(tp).
-			Id(string(item.GetID())).
+			Id(id).
 			Doc(item)
 		bulkRequest = bulkRequest.Add(indexReq)
 	}
@@ -129,4 +141,38 @@ func Get(id string, index string, item Indexable) (err error) {
 
 	err = json.Unmarshal(*response.Source, item)
 	return err
+}
+
+// OneBy search for a single result using a single value
+func OneBy(term string, field string, item Indexable) (err error) {
+	ctx := context.Background()
+	client, err := elastic.NewClient()
+
+	if err != nil {
+		return err
+	}
+
+	query := elastic.NewBoolQuery()
+
+	// for i := 0; i < len(values); i++ {
+	// 	q := elastic.NewMultiMatchQuery(values[i], "ingredients.*")
+	// 	query = query.Should(q)
+	// }
+
+	response, err := client.
+		Search(Index).
+		From(0).
+		Size(1).
+		Query(query).
+		Pretty(true).
+		Do(ctx)
+
+	if err != nil || response.TotalHits() != 1 {
+		return err
+	}
+
+	hit := response.Hits.Hits[0]
+	err = json.Unmarshal(*hit.Source, &item)
+
+	return
 }

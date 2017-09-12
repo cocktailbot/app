@@ -5,13 +5,12 @@ var CategoryType = "category"
 
 // Categories to which recipes belong
 type Categories struct {
-	BaseCollection
 	Data []Category `json:"data"`
 }
 
 // Category taxonomy for a recipe
 type Category struct {
-	BaseIndexable
+	ID       string `json:"id"`
 	Slug     string `json:"slug"`
 	Title    string `json:"title"`
 	Children []struct {
@@ -19,4 +18,14 @@ type Category struct {
 		Slug  string `json:"slug"`
 		Title string `json:"title"`
 	} `json:"children,omitempty"`
+}
+
+// GetData returns collection
+func (cs Categories) GetData() []Category {
+	return cs.Data
+}
+
+// GetID returns unique id
+func (c Category) GetID() string {
+	return c.ID
 }

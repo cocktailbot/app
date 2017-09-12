@@ -9,7 +9,7 @@
     <div>Categories</div>
     <ul>
         {{ range $i, $category := .Recipe.Categories }}
-            <li><a href="/categories/{{$category.ID}}">{{$category.Title}}</a></li>
+            <li><a href="/categories/{{$category.Slug}}">{{$category.Title}}</a></li>
         {{ end }}
     </ul>
 

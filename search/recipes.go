@@ -12,7 +12,7 @@ var RecipeType = "recipe"
 
 // Recipe represents cocktail recipe
 type Recipe struct {
-	BaseIndexable
+	ID         string `json:"id"`
 	Slug       string `json:"slug"`
 	Title      string `json:"title"`
 	Categories []struct {
@@ -47,9 +47,18 @@ type Recipe struct {
 
 // Recipes represents a collection of recipes
 type Recipes struct {
-	BaseCollection
 	Data []Recipe `json:"data"`
 	Meta Meta     `json:"meta"`
+}
+
+// GetData returns collection
+func (rs Recipes) GetData() []Recipe {
+	return rs.Data
+}
+
+// GetID returns unique id
+func (r Recipe) GetID() string {
+	return r.ID
 }
 
 // ByIngredient search for recipes matching the terms

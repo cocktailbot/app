@@ -9,8 +9,7 @@ import (
 	"github.com/cocktailbot/app/search"
 )
 
-const argrcp = "--recipes"
-const argcat = "--categories"
+const argimp = "--import"
 const argsrch = "--search"
 
 func main() {
@@ -22,14 +21,14 @@ func main() {
 	args := os.Args[1:]
 	name := args[0]
 
-	if name == argrcp {
-		path := args[1]
-		recipes := new(search.Recipes)
-		imprt(path, recipes, search.RecipeType)
-	} else if name == argcat {
-		path := args[1]
-		categories := new(search.Categories)
-		imprt(path, categories, search.CategoryType)
+	if name == argimp {
+		rpath := args[1]
+		cpath := args[2]
+		search.CreateIndex(search.Index)
+		search.CreateMapping(search.Index, search.RecipeType)
+		search.CreateMapping(search.Index, search.CategoryType)
+		imprt(rpath, search.RecipeType)
+		imprt(cpath, search.CategoryType)
 	} else if name == argsrch {
 		terms := args[1:]
 		results, e := search.ByIngredient(terms, 0, 10)
@@ -38,11 +37,13 @@ func main() {
 	}
 }
 
-func imprt(path string, items search.Collection, tp string) {
+func imprt(path string, tp string) {
+	var items map[string]interface{}
 	e := json.Parse(path, &items)
 	err.Check(e)
-
-	e = search.Save(items, search.Index, tp)
+	// fmt.Printf("%#v", items)
+	data := items["data"].([]interface{})
+	e = search.Save(data, search.Index, tp)
 	err.Check(e)
 }
 

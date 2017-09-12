@@ -29,6 +29,7 @@ Accessing local environment
 Import recipes into Elasticsearch:
 
     go run importer/cocktail.go --recipes resources/data/recipes.json
+    go run importer/cocktail.go --categories resources/data/categories.json
 
 Search for recipes with `lemon` and `apple` as ingredients
 
