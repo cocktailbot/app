@@ -9,53 +9,33 @@ import (
 )
 
 const (
-	// RecipesSearchPath points to search results page
-	RecipesSearchPath = "/search"
-	// RecipesDetailPath points to details for a recipe
-	RecipesDetailPath = "/recipes/"
+	// CategoriesSearchPath points to search results page
+	CategoriesSearchPath = "/search"
+	// CategoriesDetailPath points to details for a recipe
+	CategoriesDetailPath = "/recipes/"
 )
 
-// Recipes controller
-type Recipes struct {
+// Categories controller
+type Categories struct {
 	Application
 }
 
-// Search page
-func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
-	ingredients := c.Param("ingredients", query, "")
-	size := c.ParamInt("per_page", query, 10)
-	page := c.ParamInt("page", query, 1)
-	page = (page - 1) * size
-	if page < 0 {
-		page = 0
-	}
-
-	results, e := search.ByIngredient(strings.Split(ingredients, ","), int(page), int(size))
-	err.Check(e)
-	data := map[string]interface{}{
-		"Results":     results,
-		"Ingredients": ingredients,
-	}
-
-	c.Render(w, r, "search.html", data)
-}
-
 // Detail page for one recipe
-func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
-	slug := r.URL.Path[len(RecipesDetailPath):]
+func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
+	slug := r.URL.Path[len(CategoriesDetailPath):]
 	id := strings.Split(slug, "-")[0]
-	recipe, e := search.Get(id)
+	category := new(search.Category)
+	e := search.Get(id, search.Index, category)
 	err.Check(e)
 
-	if recipe.ID == "" {
+	if category.ID == "" {
 		http.NotFound(w, r)
 		return
 	}
 
 	data := map[string]interface{}{
-		"Recipe": recipe,
+		"Category": category,
 	}
 
-	c.Render(w, r, "/recipes/index.html", data)
+	c.Render(w, r, "/categories/index.html", data)
 }

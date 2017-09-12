@@ -32,7 +32,7 @@ type Collection interface {
 
 // Indexable item that has a unique id
 type Indexable interface {
-	GetID() int
+	GetID() string
 }
 
 // BaseIndexable common methods and properties
@@ -114,8 +114,8 @@ func Save(items Collection, index string, tp string) error {
 	return nil
 }
 
-// Get returns a an item from an index by id
-func Get(id string, index string, item *Indexable) (err error) {
+// Get returns an item from an index by id
+func Get(id string, index string, item Indexable) (err error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 	if err != nil {
