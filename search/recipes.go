@@ -2,7 +2,6 @@ package search
 
 import (
 	"context"
-	"encoding/json"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
@@ -51,18 +50,19 @@ type Recipes struct {
 	Meta Meta     `json:"meta"`
 }
 
-// GetData returns collection
-func (rs Recipes) GetData() []Recipe {
-	return rs.Data
-}
-
-// GetID returns unique id
-func (r Recipe) GetID() string {
-	return r.ID
-}
+//
+// // GetData returns collection
+// func (rs Recipes) GetData() []Recipe {
+// 	return rs.Data
+// }
+//
+// // GetID returns unique id
+// func (r Recipe) GetID() string {
+// 	return r.ID
+// }
 
 // ByIngredient search for recipes matching the terms
-func ByIngredient(values []string, from int, size int) (matches []Recipe, err error) {
+func ByIngredient(values []string, from int, size int) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 	// client, err := elastic.NewClient(
@@ -71,7 +71,7 @@ func ByIngredient(values []string, from int, size int) (matches []Recipe, err er
 	// 	elastic.SetTraceLog(log.New(os.Stderr, "[[ELASTIC]]", 0)))
 
 	if err != nil {
-		return matches, err
+		return nil, err
 	}
 
 	query := elastic.NewBoolQuery()
@@ -89,22 +89,24 @@ func ByIngredient(values []string, from int, size int) (matches []Recipe, err er
 		Pretty(true).
 		Do(ctx)
 
-	if err != nil || response.TotalHits() == 0 {
-		return matches, err
-	}
-
-	if response.Hits.TotalHits > 0 {
-		for _, hit := range response.Hits.Hits {
-			var r Recipe
-			err := json.Unmarshal(*hit.Source, &r)
-
-			if err != nil {
-				return nil, err
-			}
-
-			matches = append(matches, r)
-		}
-	}
-
-	return
+	return response, err
+	//
+	// if err != nil || response.TotalHits() == 0 {
+	// 	return matches, err
+	// }
+	// response.
+	// if response.Hits.TotalHits > 0 {
+	// 	for _, hit := range response.Hits.Hits {
+	// 		var r Recipe
+	// 		err := json.Unmarshal(*hit.Source, &r)
+	//
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	//
+	// 		matches = append(matches, r)
+	// 	}
+	// }
+	//
+	// return
 }

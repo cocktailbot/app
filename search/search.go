@@ -127,20 +127,19 @@ func Save(items []interface{}, index string, tp string) error {
 }
 
 // Get returns an item from an index by id
-func Get(id string, index string, item Indexable) (err error) {
+func Get(id string, index string) (*elastic.GetResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	response, err := client.Get().Index(index).Id(id).Do(ctx)
 	if err != nil || response.Found == false {
-		return err
+		return nil, err
 	}
 
-	err = json.Unmarshal(*response.Source, item)
-	return err
+	return response, err
 }
 
 // OneBy search for a single result using a single value

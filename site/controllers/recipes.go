@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -31,8 +32,18 @@ func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
 		page = 0
 	}
 
-	results, e := search.ByIngredient(strings.Split(ingredients, ","), int(page), int(size))
+	results := []search.Recipe{}
+	response, e := search.ByIngredient(strings.Split(ingredients, ","), int(page), int(size))
 	err.Check(e)
+
+	if response.Hits.TotalHits > 0 {
+		for _, hit := range response.Hits.Hits {
+			var r search.Recipe
+			e = json.Unmarshal(*hit.Source, &r)
+			err.Check(e)
+			results = append(results, r)
+		}
+	}
 	data := map[string]interface{}{
 		"Results":     results,
 		"Ingredients": ingredients,
@@ -46,7 +57,9 @@ func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.Path[len(RecipesDetailPath):]
 	id := strings.Split(slug, "-")[0]
 	recipe := new(search.Recipe)
-	e := search.Get(id, search.Index, recipe)
+	response, e := search.Get(id, search.Index)
+	err.Check(e)
+	e = json.Unmarshal(*response.Source, &recipe)
 	err.Check(e)
 
 	if recipe.ID == "" {
