@@ -2,6 +2,7 @@ package search
 
 import (
 	"context"
+	"fmt"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
@@ -88,7 +89,7 @@ func ByIngredient(values []string, from int, size int) (*elastic.SearchResult, e
 		Query(query).
 		Pretty(true).
 		Do(ctx)
-
+	fmt.Println(response.TotalHits())
 	return response, err
 	//
 	// if err != nil || response.TotalHits() == 0 {

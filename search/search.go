@@ -93,15 +93,6 @@ func Save(items []interface{}, index string, tp string) error {
 		return err
 	}
 
-	exists, err := client.IndexExists(index).Do(ctx)
-
-	if err != nil {
-		return err
-	}
-	if exists {
-		client.DeleteIndex(index).Do(ctx)
-	}
-
 	bulkRequest := client.Bulk()
 
 	for _, item := range items {

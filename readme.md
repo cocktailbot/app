@@ -26,20 +26,20 @@ Accessing local environment
 
     cd src/github.com/cocktailbot/app/
 
-Import recipes into Elasticsearch:
+Import data into Elasticsearch:
 
-    go run importer/cocktail.go --recipes resources/data/recipes.json
-    go run importer/cocktail.go --categories resources/data/categories.json
-
-Search for recipes with `lemon` and `apple` as ingredients
-
-    go run importer/cocktail.go --search lemon apple
+    go run importer/cocktail.go --import resources/data/recipes.json resources/data/categories.json
 
 Running the server
 
     go run site/server.go
 
 Then you can access the site at: `http://127.0.0.1/`
+
+
+Debug: Search for recipes with `lemon` and `apple` as ingredients
+
+    go run importer/cocktail.go --search lemon apple
 
 
 ## References
@@ -62,6 +62,7 @@ Then you can access the site at: `http://127.0.0.1/`
 
     # check logs
     sudo journalctl --unit elasticsearch
+    curl -XGET 'localhost:9200/cocktails/\_mapping/'
     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=id:861'
     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=title:"The Casino Cocktail"'
 

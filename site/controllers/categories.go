@@ -11,7 +11,7 @@ const (
 	// CategoriesSearchPath points to search results page
 	CategoriesSearchPath = "/search"
 	// CategoriesDetailPath points to details for a recipe
-	CategoriesDetailPath = "/recipes/"
+	CategoriesDetailPath = "/categories/"
 )
 
 // Categories controller
