@@ -2,7 +2,6 @@ package search
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	elastic "gopkg.in/olivere/elastic.v5"
@@ -57,26 +56,17 @@ func CreateIndex(index string) error {
 }
 
 // CreateMapping of type
-func CreateMapping(index string, tp string) error {
+func CreateMapping(index string, tp string, mapping string) error {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
 	if err != nil {
 		return err
 	}
-
-	indexParams := fmt.Sprintf(`{
-		"mappings":{
-			"%s":{
-				"properties": {
-
-				}
-			}
-		}
-	}`, tp)
-	// Create an index
-
-	client.PutMapping().Index(index).BodyString(indexParams).Do(ctx)
+	_, err = client.PutMapping().Index(index).Type(tp).BodyString(mapping).Do(ctx)
+	if err != nil {
+		panic(err)
+	}
 
 	if err != nil {
 		return err
@@ -133,36 +123,28 @@ func Get(id string, index string) (*elastic.GetResult, error) {
 	return response, err
 }
 
-// OneBy search for a single result using a single value
-func OneBy(term string, field string, item Indexable) (err error) {
+// GetBy search for a result by a term
+func GetBy(field string, term string, index string) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	query := elastic.NewBoolQuery()
-
-	// for i := 0; i < len(values); i++ {
-	// 	q := elastic.NewMultiMatchQuery(values[i], "ingredients.*")
-	// 	query = query.Should(q)
-	// }
+	query := elastic.NewTermQuery(field, term)
 
 	response, err := client.
-		Search(Index).
+		Search(index).
 		From(0).
 		Size(1).
-		Query(query).
 		Pretty(true).
+		Query(query).
 		Do(ctx)
 
-	if err != nil || response.TotalHits() != 1 {
-		return err
+	if err != nil {
+		return nil, err
 	}
 
-	hit := response.Hits.Hits[0]
-	err = json.Unmarshal(*hit.Source, &item)
-
-	return
+	return response, err
 }

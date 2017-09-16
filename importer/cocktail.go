@@ -25,8 +25,8 @@ func main() {
 		rpath := args[1]
 		cpath := args[2]
 		search.CreateIndex(search.Index)
-		search.CreateMapping(search.Index, search.RecipeType)
-		search.CreateMapping(search.Index, search.CategoryType)
+		search.CreateMapping(search.Index, search.RecipeType, search.RecipeMapping)
+		search.CreateMapping(search.Index, search.CategoryType, search.CategoryMapping)
 		imprt(rpath, search.RecipeType)
 		imprt(cpath, search.CategoryType)
 	} else if name == argsrch {

@@ -6,7 +6,7 @@
     <div>Sub categories</div>
     <ul>
         {{ range $i, $sub := .Category.Children }}
-            <li><a href="/categories/{{$.Category.ID}}-{{$.Category.Slug}}/{{$sub.ID}}-{{$sub.Slug}}">{{$sub.Title}}</a></li>
+            <li><a href="/categories/{{$.Category.Slug}}/{{$sub.Slug}}">{{$sub.Title}}</a></li>
         {{ end }}
     </ul>
 {{end}}

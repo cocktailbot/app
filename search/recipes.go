@@ -10,6 +10,15 @@ import (
 // RecipeType that denotes one recipe
 var RecipeType = "recipe"
 
+// RecipeMapping for index
+var RecipeMapping = fmt.Sprintf(`{
+	"%s": {
+		"properties": {
+
+		}
+	}
+}`, RecipeType)
+
 // Recipe represents cocktail recipe
 type Recipe struct {
 	ID         string `json:"id"`

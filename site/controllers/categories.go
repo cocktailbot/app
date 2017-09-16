@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/cocktailbot/app/err"
 	"github.com/cocktailbot/app/search"
@@ -21,14 +21,22 @@ type Categories struct {
 	Application
 }
 
-// Detail page for one category
+// Detail page for a category
 func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.Path[len(CategoriesDetailPath):]
-	id := strings.Split(slug, "-")[0]
 	category := new(search.Category)
-	response, e := search.Get(id, search.Index)
+	// response, e := search.Get(id, search.Index)
+	response, e := search.GetBy("slug", slug, search.Index)
+	fmt.Println(slug)
+	fmt.Println(response.TotalHits())
+	if response == nil || response.TotalHits() != 1 {
+		http.NotFound(w, r)
+		return
+	}
+
 	err.Check(e)
-	e = json.Unmarshal(*response.Source, &category)
+
+	e = json.Unmarshal(*response.Hits.Hits[0].Source, &category)
 	err.Check(e)
 
 	if category.ID == "" {
