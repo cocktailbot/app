@@ -95,6 +95,7 @@ func ByIngredient(values []string, from int, size int) (*elastic.SearchResult, e
 		Search(Index).
 		From(from).
 		Size(size).
+		Type(RecipeType).
 		Query(query).
 		Pretty(true).
 		Do(ctx)

@@ -108,14 +108,14 @@ func Save(items []interface{}, index string, tp string) error {
 }
 
 // Get returns an item from an index by id
-func Get(id string, index string) (*elastic.GetResult, error) {
+func Get(id string, typ string, index string) (*elastic.GetResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := client.Get().Index(index).Id(id).Do(ctx)
+	response, err := client.Get().Index(index).Type(typ).Id(id).Do(ctx)
 	if err != nil || response.Found == false {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ func Get(id string, index string) (*elastic.GetResult, error) {
 }
 
 // GetBy search for a result by a term
-func GetBy(field string, term string, index string) (*elastic.SearchResult, error) {
+func GetBy(field string, term string, typ string, index string) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
@@ -138,8 +138,33 @@ func GetBy(field string, term string, index string) (*elastic.SearchResult, erro
 		Search(index).
 		From(0).
 		Size(1).
+		Type(typ).
 		Pretty(true).
 		Query(query).
+		Do(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return response, err
+}
+
+// FindAll search for a result by a term
+func FindAll(size int, from int, typ string, index string) (*elastic.SearchResult, error) {
+	ctx := context.Background()
+	client, err := elastic.NewClient()
+
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := client.
+		Search(index).
+		From(from).
+		Size(size).
+		Type(typ).
+		Pretty(true).
 		Do(ctx)
 
 	if err != nil {

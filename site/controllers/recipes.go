@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -37,8 +36,6 @@ func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
 	response, e := search.ByIngredient(strings.Split(ingredients, ","), int(page), int(size))
 	err.Check(e)
 
-	fmt.Printf("%#v", response)
-
 	if response.Hits.TotalHits > 0 {
 		for _, hit := range response.Hits.Hits {
 			var r search.Recipe
@@ -60,7 +57,7 @@ func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.Path[len(RecipesDetailPath):]
 	id := strings.Split(slug, "-")[0]
 	recipe := new(search.Recipe)
-	response, e := search.Get(id, search.Index)
+	response, e := search.Get(id, search.RecipeType, search.Index)
 	err.Check(e)
 	e = json.Unmarshal(*response.Source, &recipe)
 	err.Check(e)
