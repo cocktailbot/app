@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	// CategoriesSearchPath points to search results page
-	CategoriesSearchPath = "/search"
+	// CategoriesIndexPath points to categories list
+	CategoriesIndexPath = "/index"
 	// CategoriesDetailPath points to details for a recipe
 	CategoriesDetailPath = "/categories/"
 )
