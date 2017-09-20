@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/cocktailbot/app/err"
@@ -49,27 +48,32 @@ func (c Categories) Index(w http.ResponseWriter, r *http.Request) {
 func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.Path[len(CategoriesDetailPath):]
 	category := new(search.Category)
-	// response, e := search.Get(id, search.Index)
 	response, e := search.GetBy("slug", slug, search.CategoryType, search.Index)
-	fmt.Println(slug)
-	fmt.Println(response.TotalHits())
+
 	if response == nil || response.TotalHits() != 1 {
 		http.NotFound(w, r)
 		return
 	}
-
 	err.Check(e)
-
 	e = json.Unmarshal(*response.Hits.Hits[0].Source, &category)
 	err.Check(e)
 
-	if category.ID == "" {
-		http.NotFound(w, r)
-		return
+	recipes := []search.Recipe{}
+	response, e = search.GetBy("categories.id", category.ID, search.RecipeType, search.Index)
+	err.Check(e)
+
+	if response != nil && response.TotalHits() > 0 {
+		for _, hit := range response.Hits.Hits {
+			var r search.Recipe
+			e = json.Unmarshal(*hit.Source, &r)
+			err.Check(e)
+			recipes = append(recipes, r)
+		}
 	}
 
 	data := map[string]interface{}{
 		"Category": category,
+		"Recipes":  recipes,
 	}
 
 	c.Render(w, r, "/categories/detail.html", data)

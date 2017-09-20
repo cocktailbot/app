@@ -136,8 +136,6 @@ func GetBy(field string, term string, typ string, index string) (*elastic.Search
 
 	response, err := client.
 		Search(index).
-		From(0).
-		Size(1).
 		Type(typ).
 		Pretty(true).
 		Query(query).

@@ -3,10 +3,14 @@
 {{define "body"}}
     <h1>{{.Category.Title}}</h1>
 
-    <div>Sub categories</div>
+    <div>Recipes</div>
+    {{if .Recipes}}
     <ul>
-        {{ range $i, $sub := .Category.Children }}
-            <li><a href="/categories/{{$.Category.Slug}}/{{$sub.Slug}}">{{$sub.Title}}</a></li>
+        {{ range $i, $recipe := .Recipes }}
+            <li><a href="/recipes/{{$recipe.Slug}}">{{$recipe.Title}}</a></li>
         {{ end }}
     </ul>
+    {{else}}
+        No recipes found
+    {{end}}
 {{end}}
