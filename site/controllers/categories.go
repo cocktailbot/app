@@ -11,7 +11,7 @@ import (
 
 const (
 	// CategoriesIndexPath points to categories list
-	CategoriesIndexPath = "/index"
+	CategoriesIndexPath = "/categories"
 	// CategoriesDetailPath points to details for a recipe
 	CategoriesDetailPath = "/categories/"
 )
@@ -42,7 +42,7 @@ func (c Categories) Index(w http.ResponseWriter, r *http.Request) {
 		"Categories": results,
 	}
 
-	c.Render(w, r, "/categories/index.html", data)
+	c.Render(w, r, "categories/index.html", data)
 }
 
 // Detail page for a category

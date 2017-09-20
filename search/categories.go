@@ -24,14 +24,10 @@ type Categories struct {
 
 // Category taxonomy for a recipe
 type Category struct {
-	ID       string `json:"id"`
-	Slug     string `json:"slug"`
-	Title    string `json:"title"`
-	Children []struct {
-		ID    string `json:"id"`
-		Slug  string `json:"slug"`
-		Title string `json:"title"`
-	} `json:"children,omitempty"`
+	ID       string     `json:"id"`
+	Slug     string     `json:"slug"`
+	Title    string     `json:"title"`
+	Children []Category `json:"children,omitempty"`
 }
 
 // GetData returns collection

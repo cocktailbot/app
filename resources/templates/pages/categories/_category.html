@@ -1,0 +1,10 @@
+{{define "_category"}}
+    <a href="/categories/{{.Slug}}">{{.Title}}</a>
+    {{if $.Children}}
+        <ul>
+            {{range $j, $subCategory := .Children }}
+                <li>{{template "_category" $subCategory}}</li>
+            {{end}}
+        </ul>
+    {{end}}
+{{end}}

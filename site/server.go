@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	fs := http.FileServer(http.Dir(controllers.Prefix + "static"))
+	fs := http.FileServer(http.Dir(controllers.StaticPath + "static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	recipes := new(controllers.Recipes)
@@ -17,8 +17,8 @@ func main() {
 
 	http.HandleFunc(controllers.RecipesDetailPath, recipes.Detail)
 	http.HandleFunc(controllers.RecipesSearchPath, recipes.Search)
-	http.HandleFunc(controllers.CategoriesIndexPath, categories.Index)
 	http.HandleFunc(controllers.CategoriesDetailPath, categories.Detail)
+	http.HandleFunc(controllers.CategoriesIndexPath, categories.Index)
 	http.HandleFunc(controllers.HomePath, home.Index)
 
 	log.Println("Listening...")

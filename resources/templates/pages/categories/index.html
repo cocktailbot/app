@@ -5,14 +5,7 @@
 
     <ul>
         {{range $i, $category := .Categories}}
-            <li><a href="/categories/{{$category.Slug}}">{{$category.Title}}</a></li>
-            {{if $category.Children != nil}}
-                <ul>
-                    {{range $j, $subCategory := $category.Children }}
-                        <li><a href="/categories/{{$category.Slug}}/{{$subCategory.Slug}}">{{$subCategory.Title}}</a></li>
-                    {{end}}
-                </ul>
-            {{end}}
+            <li>{{template "_category" $category}}</li>
         {{end}}
     </ul>
 {{end}}

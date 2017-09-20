@@ -49,7 +49,7 @@ func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
 		"Ingredients": ingredients,
 	}
 
-	c.Render(w, r, "/recipes/search.html", data)
+	c.Render(w, r, "recipes/search.html", data)
 }
 
 // Detail page for one recipe
@@ -71,5 +71,5 @@ func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 		"Recipe": recipe,
 	}
 
-	c.Render(w, r, "/recipes/detail.html", data)
+	c.Render(w, r, "recipes/detail.html", data)
 }

@@ -16,8 +16,21 @@ import (
 type Application struct {
 }
 
-// Prefix path for template location
-const Prefix = "./resources/"
+// TemplatePath path for template location
+var TemplatePath = filepath.Join(".", "resources", "templates")
+
+// StaticPath location of js/css/etc files
+var StaticPath = filepath.Join(".", "resources", "static")
+
+var layout = filepath.Join(TemplatePath, "layouts", "layout.html")
+var templates = map[string]*template.Template{
+	"categories/index.html": template.Must(
+		template.ParseFiles(
+			layout,
+			filepath.Join(TemplatePath, "pages", "categories", "index.html"),
+			filepath.Join(TemplatePath, "pages", "categories", "_category.html"),
+		)),
+}
 
 // JSON return data as json response
 func (a Application) JSON(w http.ResponseWriter, r *http.Request, data interface{}) {
@@ -32,8 +45,16 @@ func (a Application) Render(w http.ResponseWriter, r *http.Request, path string,
 		return
 	}
 
-	lp := filepath.Join(Prefix, "templates", "layout.html")
-	fp := filepath.Join(Prefix, "templates", "/pages/"+filepath.Clean(path))
+	// Some complex templates are declared ahead of time
+	if templates[path] != nil {
+		if err := templates[path].ExecuteTemplate(w, "layout", data); err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	fp := filepath.Join(TemplatePath, "/pages/"+filepath.Clean(path))
 
 	// Return a 404 if the template doesn't exist
 	info, err := os.Stat(fp)
@@ -50,18 +71,18 @@ func (a Application) Render(w http.ResponseWriter, r *http.Request, path string,
 		return
 	}
 
-	tmpl, err := template.ParseFiles(lp, fp)
+	tmpl, err := template.ParseFiles(layout, fp)
 	if err != nil {
 		// Log the detailed error
 		log.Println(err.Error())
 		// Return a generic "Internal Server Error" message
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		log.Println(err.Error())
-		http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 }
 
