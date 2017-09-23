@@ -124,7 +124,7 @@ func Get(id string, typ string, index string) (*elastic.GetResult, error) {
 }
 
 // GetBy search for a result by a term
-func GetBy(field string, term string, typ string, index string) (*elastic.SearchResult, error) {
+func GetBy(values map[string]string, typ string, index string) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
@@ -132,7 +132,13 @@ func GetBy(field string, term string, typ string, index string) (*elastic.Search
 		return nil, err
 	}
 
-	query := elastic.NewTermQuery(field, term)
+	query := elastic.NewBoolQuery()
+
+	for field, term := range values {
+		// q := elastic.NewMultiMatchQuery(values[i], "ingredients.*")
+		q := elastic.NewTermQuery(field, term)
+		query = query.Should(q)
+	}
 
 	response, err := client.
 		Search(index).
@@ -149,7 +155,7 @@ func GetBy(field string, term string, typ string, index string) (*elastic.Search
 }
 
 // FindAll search for a result by a term
-func FindAll(size int, from int, typ string, index string) (*elastic.SearchResult, error) {
+func FindAll(size int, from int, typ string, index string, sortField string, asc bool) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
@@ -163,6 +169,7 @@ func FindAll(size int, from int, typ string, index string) (*elastic.SearchResul
 		Size(size).
 		Type(typ).
 		Pretty(true).
+		Sort(sortField, asc).
 		Do(ctx)
 
 	if err != nil {

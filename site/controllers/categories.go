@@ -3,8 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/cocktailbot/app/err"
+	"github.com/cocktailbot/app/models"
 	"github.com/cocktailbot/app/search"
 )
 
@@ -25,13 +27,13 @@ func (c Categories) Index(w http.ResponseWriter, r *http.Request) {
 	size := 10000 // Target all categories
 	page := 0
 
-	results := []search.Category{}
-	response, e := search.FindAll(size, page, search.CategoryType, search.Index)
+	results := []models.Category{}
+	response, e := search.FindAll(size, page, search.CategoryType, search.Index, "title", true)
 	err.Check(e)
 
 	if response.Hits.TotalHits > 0 {
 		for _, hit := range response.Hits.Hits {
-			var c search.Category
+			var c models.Category
 			e = json.Unmarshal(*hit.Source, &c)
 			err.Check(e)
 			results = append(results, c)
@@ -46,9 +48,15 @@ func (c Categories) Index(w http.ResponseWriter, r *http.Request) {
 
 // Detail page for a category
 func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
-	slug := r.URL.Path[len(CategoriesDetailPath):]
-	category := new(search.Category)
-	response, e := search.GetBy("slug", slug, search.CategoryType, search.Index)
+	path := r.URL.Path[len(CategoriesDetailPath):]
+	slugs := strings.Split(path, "/")
+	slug := slugs[len(slugs)-1]
+	category := new(models.Category)
+	values := map[string]string{
+		"slug":          slug,
+		"children.slug": slug,
+	}
+	response, e := search.GetBy(values, search.CategoryType, search.Index)
 
 	if response == nil || response.TotalHits() != 1 {
 		http.NotFound(w, r)
@@ -58,13 +66,16 @@ func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	e = json.Unmarshal(*response.Hits.Hits[0].Source, &category)
 	err.Check(e)
 
-	recipes := []search.Recipe{}
-	response, e = search.GetBy("categories.id", category.ID, search.RecipeType, search.Index)
+	recipes := []models.Recipe{}
+	values = map[string]string{
+		"categories.slug": slug,
+	}
+	response, e = search.GetBy(values, search.RecipeType, search.Index)
 	err.Check(e)
 
 	if response != nil && response.TotalHits() > 0 {
 		for _, hit := range response.Hits.Hits {
-			var r search.Recipe
+			var r models.Recipe
 			e = json.Unmarshal(*hit.Source, &r)
 			err.Check(e)
 			recipes = append(recipes, r)

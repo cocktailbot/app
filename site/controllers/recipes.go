@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cocktailbot/app/err"
+	"github.com/cocktailbot/app/models"
 	"github.com/cocktailbot/app/search"
 )
 
@@ -32,13 +33,13 @@ func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
 		page = 0
 	}
 
-	results := []search.Recipe{}
+	results := []models.Recipe{}
 	response, e := search.ByIngredient(strings.Split(ingredients, ","), int(page), int(size))
 	err.Check(e)
 
 	if response.Hits.TotalHits > 0 {
 		for _, hit := range response.Hits.Hits {
-			var r search.Recipe
+			var r models.Recipe
 			e = json.Unmarshal(*hit.Source, &r)
 			err.Check(e)
 			results = append(results, r)
@@ -56,7 +57,7 @@ func (c Recipes) Search(w http.ResponseWriter, r *http.Request) {
 func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.Path[len(RecipesDetailPath):]
 	id := strings.Split(slug, "-")[0]
-	recipe := new(search.Recipe)
+	recipe := new(models.Recipe)
 	response, e := search.Get(id, search.RecipeType, search.Index)
 	err.Check(e)
 	e = json.Unmarshal(*response.Source, &recipe)

@@ -3,7 +3,7 @@
     {{if $.Children}}
         <ul>
             {{range $j, $subCategory := .Children }}
-                <li>{{template "_category" $subCategory}}</li>
+                <li><a href="/categories/{{$.Slug}}/{{$subCategory.Slug}}">{{$subCategory.Title}}</a></li>
             {{end}}
         </ul>
     {{end}}

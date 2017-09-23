@@ -1,6 +1,7 @@
 {{define "title"}}Recipe - {{.Recipe.Title}}{{end}}
 
 {{define "body"}}
+    <div><a href="/recipes">Recipes</a> / {{.Recipe.Title}}</div>
     <h1>{{.Recipe.Title}}</h1>
 
     <div>Difficulty {{.Recipe.DifficultyRating}}</div>
@@ -9,10 +10,7 @@
     <div>Categories</div>
     <ul>
         {{ range $i, $category := .Recipe.Categories }}
-            <li><a href="/categories/{{$category.Slug}}">{{$category.Title}}</a></li>
-            <!-- { range $j, $sub := $category.Children }
-                <li><a href="/categories/{$category.Slug}/{$sub.Slug}">{$sub.Title}</a></li>
-            { end } -->
+            <li><a href="/categories/{{$category.URL}}">{{$category.Title}}</a></li>
         {{ end }}
     </ul>
 
