@@ -16,6 +16,13 @@ import (
 type Application struct {
 }
 
+// Pagination stores meta about the current page, total pages, amount per page
+type Pagination struct {
+	Total   int
+	PerPage int
+	Page    int
+}
+
 // TemplatePath path for template location
 var TemplatePath = filepath.Join(".", "resources", "templates")
 
@@ -104,4 +111,12 @@ func (a Application) ParamInt(param string, query url.Values, def int) (value in
 	}
 
 	return int(i)
+}
+
+func createPagination(page int, perPage int, total int) (pagination Pagination) {
+	pagination.Page = page
+	pagination.PerPage = perPage
+	pagination.Total = total
+
+	return pagination
 }

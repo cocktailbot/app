@@ -28,7 +28,7 @@ func (c Categories) Index(w http.ResponseWriter, r *http.Request) {
 	page := 0
 
 	results := []models.Category{}
-	response, e := search.FindAll(size, page, search.CategoryType, search.Index, "title", true)
+	response, e := search.Find(map[string]string{}, size, page, search.CategoryType, search.Index, "title", true)
 	err.Check(e)
 
 	if response.Hits.TotalHits > 0 {
@@ -39,8 +39,11 @@ func (c Categories) Index(w http.ResponseWriter, r *http.Request) {
 			results = append(results, c)
 		}
 	}
+
+	pagination := createPagination(page, size, int(response.Hits.TotalHits))
 	data := map[string]interface{}{
 		"Categories": results,
+		"Pagination": pagination,
 	}
 
 	c.Render(w, r, "categories/index.html", data)

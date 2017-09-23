@@ -2,6 +2,8 @@
 
 Place this folder into `$YOUR_GO_WORKSPACE/src/github.com/cocktailbot/app`
 
+    http://127.0.0.1/recipes?ingredients=vodka%20gin
+
 ## Local environment
 
 Starting it up; this will setup the VM and install Go 1.8 and Elasticsearch 5.5
@@ -37,9 +39,9 @@ Running the server
 Then you can access the site at: `http://127.0.0.1/`
 
 
-Debug: Search for recipes with `lemon` and `apple` as ingredients
+<!-- Debug: Search for recipes with `lemon` and `apple` as ingredients
 
-    go run importer/cocktail.go --search lemon apple
+    go run importer/cocktail.go --search lemon apple -->
 
 
 ## References

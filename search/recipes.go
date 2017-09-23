@@ -14,7 +14,15 @@ var RecipeType = "recipe"
 var RecipeMapping = fmt.Sprintf(`{
 	"%s": {
 		"properties": {
-
+			"title": {
+               "type": "keyword",
+			   "fields": {
+	              "lowercase": {
+	                 "type": "string",
+	                 "analyzer": "custom_lower"
+	              }
+	           }
+            }
 		}
 	}
 }`, RecipeType)

@@ -24,15 +24,21 @@ type Meta struct {
 	} `json:"pagination"`
 }
 
-// Collection of indexable items
-type Collection interface {
-	GetData() []Indexable
+// Mapping for index
+var Mapping = `
+{
+	"settings":{
+		"analysis":{
+			"analyzer":{
+				"custom_lower":{
+					"type":"custom",
+					"tokenizer":"lowercase"
+				}
+			}
+		}
+	}
 }
-
-// Indexable item that has a unique id
-type Indexable interface {
-	GetID() string
-}
+`
 
 // CreateIndex with given name
 func CreateIndex(index string) error {
@@ -48,9 +54,15 @@ func CreateIndex(index string) error {
 		return err
 	}
 	if exists {
-		client.DeleteIndex(index).Do(ctx)
+		_, err = client.DeleteIndex(index).Do(ctx)
+		if err != nil {
+			panic(err)
+		}
 	}
-	_, err = client.CreateIndex(index).Do(ctx)
+	_, err = client.CreateIndex(index).BodyString(Mapping).Do(ctx)
+	if err != nil {
+		panic(err)
+	}
 
 	return err
 }
@@ -154,13 +166,23 @@ func GetBy(values map[string]string, typ string, index string) (*elastic.SearchR
 	return response, err
 }
 
-// FindAll search for a result by a term
-func FindAll(size int, from int, typ string, index string, sortField string, asc bool) (*elastic.SearchResult, error) {
+// Find search for a result by a term
+func Find(values map[string]string, size int, from int, typ string, index string, sortField string, asc bool) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
 	if err != nil {
 		return nil, err
+	}
+
+	query := elastic.NewBoolQuery()
+
+	for field, term := range values {
+		// q := elastic.NewMultiMatchQuery(values[i], "ingredients.*")
+		// q := elastic.NewTermQuery(field, term)
+
+		q := elastic.NewMatchQuery(field, term).Operator("AND")
+		query = query.Should(q)
 	}
 
 	response, err := client.
@@ -169,6 +191,7 @@ func FindAll(size int, from int, typ string, index string, sortField string, asc
 		Size(size).
 		Type(typ).
 		Pretty(true).
+		Query(query).
 		Sort(sortField, asc).
 		Do(ctx)
 

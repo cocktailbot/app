@@ -3,7 +3,7 @@
     {{if $.Children}}
         <ul>
             {{range $j, $subCategory := .Children }}
-                <li><a href="/categories/{{$.Slug}}/{{$subCategory.Slug}}">{{$subCategory.Title}} {{len $subCategory.Children}}</a></li>
+                <li><a href="/categories/{{$.Slug}}/{{$subCategory.Slug}}">{{$subCategory.Title}}</a></li>
                 {{if $subCategory.Children}}
                     <ul>
                         {{range $h, $subSubCategory := $subCategory.Children }}
