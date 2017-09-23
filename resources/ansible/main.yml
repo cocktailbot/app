@@ -145,7 +145,7 @@
         . ~/.bash_profile;
         go get -d -u github.com/cocktailbot/app/...;
         cd ~/go_workspace/src/github.com/cocktailbot/app;
-        go run importer/cocktail.go --recipes resources/data/recipes.json;
+        go run importer/cocktail.go --import resources/data/recipes.json resources/data/categories.json
         (cd ~/go_workspace/src/github.com/cocktailbot/app/site; go build server.go);
       become: yes
       become_user: cocktailbot
