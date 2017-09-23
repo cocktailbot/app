@@ -22,7 +22,19 @@ var RecipeMapping = fmt.Sprintf(`{
 	                 "analyzer": "custom_autocomplete"
 	              }
 	           }
-            }
+		   },
+		   "ingredients": {
+			   "properties": {
+				   "list": {
+					   "properties": {
+						   "ingredient": {
+							   "type": "text",
+							   "analyzer": "custom_autocomplete"
+						   }
+					   }
+				   }
+			   }
+		   }
 		}
 	}
 }`, RecipeType)
