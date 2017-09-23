@@ -2,6 +2,8 @@
 
 Place this folder into `$YOUR_GO_WORKSPACE/src/github.com/cocktailbot/app`
 
+    http://127.0.0.1/recipes?ingredients=vodka%20gin
+
 ## Local environment
 
 Starting it up; this will setup the VM and install Go 1.8 and Elasticsearch 5.5
@@ -26,19 +28,20 @@ Accessing local environment
 
     cd src/github.com/cocktailbot/app/
 
-Import recipes into Elasticsearch:
+Import data into Elasticsearch:
 
-    go run importer/cocktail.go --recipes resources/data/recipes.json
-
-Search for recipes with `lemon` and `apple` as ingredients
-
-    go run importer/cocktail.go --search lemon apple
+    go run importer/cocktail.go --import resources/data/recipes.json resources/data/categories.json
 
 Running the server
 
     go run site/server.go
 
 Then you can access the site at: `http://127.0.0.1/`
+
+
+<!-- Debug: Search for recipes with `lemon` and `apple` as ingredients
+
+    go run importer/cocktail.go --search lemon apple -->
 
 
 ## References
@@ -49,6 +52,7 @@ Then you can access the site at: `http://127.0.0.1/`
 - https://github.com/olivere/elastic/wiki
 - https://github.com/olivere/elastic/issues/525
 - https://serverfault.com/questions/112795/how-to-run-a-server-on-port-80-as-a-normal-user-on-linux
+- https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
 
 ## Go docs & utilities
 
@@ -61,6 +65,7 @@ Then you can access the site at: `http://127.0.0.1/`
 
     # check logs
     sudo journalctl --unit elasticsearch
+    curl -XGET 'localhost:9200/cocktails/\_mapping/'
     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=id:861'
     curl -XGET 'localhost:9200/cocktails/recipe/\_search?q=title:"The Casino Cocktail"'
 

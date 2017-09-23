@@ -1,0 +1,21 @@
+{{define "title"}}Category - {{.Category.Title}}{{end}}
+
+{{define "body"}}
+    <div><a href="/recipes">Recipes</a> / Cocktail Recipe Categories</div>
+    <h1>{{.Category.Title}}</h1>
+
+    <div><a href="/categories">Categories</a> / {{.Category.Title}}</div>
+
+    <div>&nbsp;</div>
+
+    <div>Recipes</div>
+    {{if .Recipes}}
+    <ul>
+        {{ range $i, $recipe := .Recipes }}
+            <li><a href="/recipes/{{$recipe.Slug}}">{{$recipe.Title}}</a></li>
+        {{ end }}
+    </ul>
+    {{else}}
+        No recipes found
+    {{end}}
+{{end}}

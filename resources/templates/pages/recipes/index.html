@@ -1,31 +1,15 @@
-{{define "title"}}Recipe - {{.Recipe.Title}}{{end}}
+{{define "title"}}Categories{{end}}
 
 {{define "body"}}
-    <h1>{{.Recipe.Title}}</h1>
+    <h1>Cocktail Recipes</h1>
 
-    <div>Difficulty {{.Recipe.DifficultyRating}}</div>
-    <div>Time {{.Recipe.TotalTime}}</div>
-
-    <div>Categories</div>
     <ul>
-        {{ range $i, $category := .Recipe.Categories }}
-            <li><a href="/categories/{{$category.ID}}">{{$category.Title}}</a></li>
-        {{ end }}
+        {{range $i, $recipe := .Recipes}}
+            <li>
+                <h3>{{$recipe.Title}}</h3>
+                {{$recipe.Description}}
+                <a href="/recipes/{{$recipe.Slug}}">Find out more</a>
+            </li>
+        {{end}}
     </ul>
-
-    <div>Ingredients</div>
-    <ul>
-        {{ range $i, $ingredient := (index .Recipe.Ingredients 0).List }}
-            <li>{{$ingredient.Amount}} {{$ingredient.Ingredient}}</li>
-        {{ end }}
-    </ul>
-    </ul>
-
-    <div>Methods</div>
-    <ol>
-        {{ range $i, $method := (index .Recipe.Methods 0).List }}
-            <li>{{$method.Step}}</li>
-        {{ end }}
-    </ol>
-
 {{end}}

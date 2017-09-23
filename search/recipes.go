@@ -2,138 +2,46 @@ package search
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
-// Recipe represents cocktail recipe
-type Recipe struct {
-	ID         string `json:"id"`
-	Slug       string `json:"slug"`
-	Title      string `json:"title"`
-	Categories []struct {
-		ID    string `json:"id"`
-		Title string `json:"title"`
-		Slug  string `json:"slug"`
-	} `json:"categories"`
-	DifficultyRating string `json:"difficultyRating"`
-	RecipeTimes      []struct {
-		Title string `json:"title"`
-		Time  string `json:"time"`
-	} `json:"recipeTimes"`
-	TotalTime   string `json:"totalTime"`
-	Serves      string `json:"serves"`
-	Description string `json:"description"`
-	Ingredients []struct {
-		Title string `json:"title"`
-		List  []struct {
-			Amount     string `json:"amount"`
-			Ingredient string `json:"ingredient"`
-			Notes      string `json:"notes"`
-		} `json:"list"`
-	} `json:"ingredients"`
-	Methods []struct {
-		Title string `json:"title"`
-		List  []struct {
-			Step string `json:"step"`
-		} `json:"list"`
-	} `json:"methods"`
-}
+// RecipeType that denotes one recipe
+var RecipeType = "recipe"
 
-// Recipes represents a collection of recipes
-type Recipes struct {
-	Data []Recipe `json:"data"`
-}
-
-// Index for storing cocktail recipes
-var Index = "cocktails"
-
-// Typ that denotes one recipe
-var Typ = "recipe"
-
-// Save recipes into a new index
-func Save(recipes Recipes) error {
-	ctx := context.Background()
-	client, err := elastic.NewClient()
-
-	if err != nil {
-		return err
+// RecipeMapping for index
+var RecipeMapping = fmt.Sprintf(`{
+	"%s": {
+		"properties": {
+			"title": {
+               "type": "keyword",
+			   "fields": {
+	              "lowercase": {
+	                 "type": "string",
+	                 "analyzer": "custom_autocomplete"
+	              }
+	           }
+		   },
+		   "ingredients": {
+			   "properties": {
+				   "list": {
+					   "properties": {
+						   "ingredient": {
+							   "type": "text",
+							   "analyzer": "custom_autocomplete",
+							   "search_analyzer": "standard"
+						   }
+					   }
+				   }
+			   }
+		   }
+		}
 	}
-
-	exists, err := client.IndexExists(Index).Do(ctx)
-
-	if err != nil {
-		return err
-	}
-	if exists {
-		client.DeleteIndex(Index).Do(ctx)
-	}
-
-	indexParams := `{
-			"mappings":{
-				"recipe":{
-					"properties": {
-
-					}
-				}
-			}
-		}`
-
-	// Create an index
-	_, err = client.CreateIndex(Index).BodyString(indexParams).Do(ctx)
-
-	if err != nil {
-		return err
-	}
-
-	bulkRequest := client.Bulk()
-
-	for i := 0; i < len(recipes.Data); i++ {
-		fmt.Println(recipes.Data[i].Title)
-		indexReq := elastic.
-			NewBulkIndexRequest().
-			Index(Index).
-			Type(Typ).
-			Id(recipes.Data[i].ID).
-			Doc(recipes.Data[i])
-		bulkRequest = bulkRequest.Add(indexReq)
-	}
-
-	res, err := bulkRequest.Do(ctx)
-
-	fmt.Printf("Indexed items %d\n", len(res.Indexed()))
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Get returns a recipe by id
-func Get(id string) (recipe Recipe, err error) {
-	ctx := context.Background()
-	client, err := elastic.NewClient()
-
-	if err != nil {
-		return recipe, err
-	}
-
-	response, err := client.Get().Index(Index).Id(id).Do(ctx)
-
-	if err != nil || response.Found == false {
-		return recipe, err
-	}
-
-	err = json.Unmarshal(*response.Source, &recipe)
-
-	return recipe, err
-}
+}`, RecipeType)
 
 // ByIngredient search for recipes matching the terms
-func ByIngredient(values []string, from int, size int) (matches []Recipe, err error) {
+func ByIngredient(values []string, from int, size int) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 	// client, err := elastic.NewClient(
@@ -142,7 +50,7 @@ func ByIngredient(values []string, from int, size int) (matches []Recipe, err er
 	// 	elastic.SetTraceLog(log.New(os.Stderr, "[[ELASTIC]]", 0)))
 
 	if err != nil {
-		return matches, err
+		return nil, err
 	}
 
 	query := elastic.NewBoolQuery()
@@ -156,26 +64,10 @@ func ByIngredient(values []string, from int, size int) (matches []Recipe, err er
 		Search(Index).
 		From(from).
 		Size(size).
+		Type(RecipeType).
 		Query(query).
 		Pretty(true).
 		Do(ctx)
 
-	if err != nil || response.TotalHits() == 0 {
-		return matches, err
-	}
-
-	if response.Hits.TotalHits > 0 {
-		for _, hit := range response.Hits.Hits {
-			var r Recipe
-			err := json.Unmarshal(*hit.Source, &r)
-
-			if err != nil {
-				return nil, err
-			}
-
-			matches = append(matches, r)
-		}
-	}
-
-	return
+	return response, err
 }

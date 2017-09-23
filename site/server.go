@@ -1,36 +1,28 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
-	"github.com/cocktailbot/app/err"
-	"github.com/cocktailbot/app/search"
 	"github.com/cocktailbot/app/site/controllers"
 )
 
-func apiRecipes(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
-
-	w.Header().Set("Content-Type", "application/json")
-	results, e := search.ByIngredient(query["ingredients"], 0, 10)
-	err.Check(e)
-	json.NewEncoder(w).Encode(results)
-}
-
 func main() {
-	http.HandleFunc("/api/recipes", apiRecipes)
-
-	fs := http.FileServer(http.Dir(controllers.Prefix + "static"))
+	fs := http.FileServer(http.Dir(controllers.StaticPath + "static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	recipes := new(controllers.Recipes)
 	home := new(controllers.Home)
+	recipes := new(controllers.Recipes)
+	categories := new(controllers.Categories)
+
+	http.HandleFunc(controllers.HomePath, home.Index)
 
 	http.HandleFunc(controllers.RecipesDetailPath, recipes.Detail)
+	http.HandleFunc(controllers.RecipesIndexPath, recipes.Index)
 	http.HandleFunc(controllers.RecipesSearchPath, recipes.Search)
-	http.HandleFunc(controllers.HomePath, home.Index)
+
+	http.HandleFunc(controllers.CategoriesDetailPath, categories.Detail)
+	http.HandleFunc(controllers.CategoriesIndexPath, categories.Index)
 
 	log.Println("Listening...")
 	http.ListenAndServe(":8080", nil)

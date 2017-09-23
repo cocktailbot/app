@@ -9,7 +9,7 @@ import (
 	"github.com/cocktailbot/app/search"
 )
 
-const argrcp = "--recipes"
+const argimp = "--import"
 const argsrch = "--search"
 
 func main() {
@@ -21,9 +21,14 @@ func main() {
 	args := os.Args[1:]
 	name := args[0]
 
-	if name == argrcp {
-		path := args[1]
-		impr(path)
+	if name == argimp {
+		rpath := args[1]
+		cpath := args[2]
+		search.CreateIndex(search.Index)
+		search.CreateMapping(search.Index, search.RecipeType, search.RecipeMapping)
+		search.CreateMapping(search.Index, search.CategoryType, search.CategoryMapping)
+		imprt(rpath, search.RecipeType)
+		imprt(cpath, search.CategoryType)
 	} else if name == argsrch {
 		terms := args[1:]
 		results, e := search.ByIngredient(terms, 0, 10)
@@ -32,11 +37,13 @@ func main() {
 	}
 }
 
-func impr(path string) {
-	var recipes search.Recipes
-	e := json.Parse(path, &recipes)
+func imprt(path string, tp string) {
+	var items map[string]interface{}
+	e := json.Parse(path, &items)
 	err.Check(e)
-	e = search.Save(recipes)
+	// fmt.Printf("%#v", items)
+	data := items["data"].([]interface{})
+	e = search.Save(data, search.Index, tp)
 	err.Check(e)
 }
 
@@ -44,5 +51,6 @@ func help() {
 	fmt.Println("No arguments supplied")
 	fmt.Println("\nExamples:")
 	fmt.Println(" --recipes PATH_TO_RECIPES_JSON")
+	fmt.Println(" --categories PATH_TO_CATEGORIES_JSON")
 	fmt.Println(" --search TERM1 TERM 2...")
 }

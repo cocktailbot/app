@@ -17,5 +17,5 @@ func (controller Home) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	controller.Render(w, r, "index.html", nil)
+	controller.Render(w, r, "home/index.html", nil)
 }

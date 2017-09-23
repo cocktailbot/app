@@ -1,0 +1,12 @@
+{{define "title"}}Categories{{end}}
+
+{{define "body"}}
+    <div><a href="/recipes">Recipes</a> / Cocktail Recipe Categories</div>
+    <h1>Cocktail Recipe Categories</h1>
+
+    <ul>
+        {{range $i, $category := .Categories}}
+            <li>{{template "_category" $category}}</li>
+        {{end}}
+    </ul>
+{{end}}
