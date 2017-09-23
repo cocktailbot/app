@@ -19,7 +19,7 @@ var RecipeMapping = fmt.Sprintf(`{
 			   "fields": {
 	              "lowercase": {
 	                 "type": "string",
-	                 "analyzer": "custom_lower"
+	                 "analyzer": "custom_autocomplete"
 	              }
 	           }
             }

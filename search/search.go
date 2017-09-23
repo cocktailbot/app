@@ -29,11 +29,26 @@ var Mapping = `
 {
 	"settings":{
 		"analysis":{
+			"filter": {
+		        "autocomplete_filter": {
+		            "type":     "edge_ngram",
+		            "min_gram": 1,
+		            "max_gram": 20
+		        }
+		    },
 			"analyzer":{
 				"custom_lower":{
 					"type":"custom",
 					"tokenizer":"lowercase"
-				}
+				},
+				"custom_autocomplete": {
+		            "type":      "custom",
+		            "tokenizer": "standard",
+		            "filter": [
+		                "lowercase",
+		                "autocomplete_filter"
+		            ]
+		        }
 			}
 		}
 	}
@@ -180,9 +195,10 @@ func Find(values map[string]string, size int, from int, typ string, index string
 	for field, term := range values {
 		// q := elastic.NewMultiMatchQuery(values[i], "ingredients.*")
 		// q := elastic.NewTermQuery(field, term)
-
-		q := elastic.NewMatchQuery(field, term).Operator("AND")
-		query = query.Should(q)
+		if len(term) > 0 {
+			q := elastic.NewMatchQuery(field, term).Operator("AND")
+			query = query.Must(q)
+		}
 	}
 
 	response, err := client.
