@@ -52,6 +52,7 @@ Then you can access the site at: `http://127.0.0.1/`
 - https://github.com/olivere/elastic/wiki
 - https://github.com/olivere/elastic/issues/525
 - https://serverfault.com/questions/112795/how-to-run-a-server-on-port-80-as-a-normal-user-on-linux
+- https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
 
 ## Go docs & utilities
 

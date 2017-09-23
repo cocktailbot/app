@@ -29,7 +29,8 @@ var RecipeMapping = fmt.Sprintf(`{
 					   "properties": {
 						   "ingredient": {
 							   "type": "text",
-							   "analyzer": "custom_autocomplete"
+							   "analyzer": "custom_autocomplete",
+							   "search_analyzer": "standard"
 						   }
 					   }
 				   }
