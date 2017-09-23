@@ -53,8 +53,9 @@ func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	slug := slugs[len(slugs)-1]
 	category := new(models.Category)
 	values := map[string]string{
-		"slug":          slug,
-		"children.slug": slug,
+		"slug":                   slug,
+		"children.slug":          slug,
+		"children.children.slug": slug,
 	}
 	response, e := search.GetBy(values, search.CategoryType, search.Index)
 

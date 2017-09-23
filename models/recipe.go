@@ -1,5 +1,7 @@
 package models
 
+import "html/template"
+
 // Recipe represents cocktail recipe
 type Recipe struct {
 	ID         string `json:"id"`
@@ -16,9 +18,9 @@ type Recipe struct {
 		Title string `json:"title"`
 		Time  string `json:"time"`
 	} `json:"recipeTimes"`
-	TotalTime   string `json:"totalTime"`
-	Serves      string `json:"serves"`
-	Description string `json:"description"`
+	TotalTime   string        `json:"totalTime"`
+	Serves      string        `json:"serves"`
+	Description template.HTML `json:"description"`
 	Ingredients []struct {
 		Title string `json:"title"`
 		List  []struct {

@@ -15,6 +15,27 @@ var CategoryMapping = fmt.Sprintf(`{
 			},
 			"title": {
 				"type":"keyword"
+			},
+			"children": {
+				"properties": {
+					"slug": {
+						"type":"keyword"
+					},
+					"children": {
+						"properties": {
+							"slug": {
+								"type":"keyword"
+							},
+							"children": {
+								"properties": {
+									"slug": {
+										"type":"keyword"
+									}
+								}
+							}							
+						}
+					}
+				}
 			}
 		}
 	}

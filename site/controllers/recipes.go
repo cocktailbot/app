@@ -13,6 +13,8 @@ import (
 const (
 	// RecipesSearchPath points to search results page
 	RecipesSearchPath = "/search"
+	// RecipesIndexPath list page
+	RecipesIndexPath = "/recipes"
 	// RecipesDetailPath points to details for a recipe
 	RecipesDetailPath = "/recipes/"
 )
@@ -73,4 +75,28 @@ func (c Recipes) Detail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.Render(w, r, "recipes/detail.html", data)
+}
+
+// Index page
+func (c Recipes) Index(w http.ResponseWriter, r *http.Request) {
+	size := 10000 // Target all
+	page := 0
+
+	results := []models.Recipe{}
+	response, e := search.FindAll(size, page, search.RecipeType, search.Index, "title", true)
+	err.Check(e)
+
+	if response.Hits.TotalHits > 0 {
+		for _, hit := range response.Hits.Hits {
+			var c models.Recipe
+			e = json.Unmarshal(*hit.Source, &c)
+			err.Check(e)
+			results = append(results, c)
+		}
+	}
+	data := map[string]interface{}{
+		"Recipes": results,
+	}
+
+	c.Render(w, r, "recipes/index.html", data)
 }
