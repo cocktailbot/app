@@ -59,15 +59,15 @@ func (c Recipes) Index(w http.ResponseWriter, r *http.Request) {
 		terms["title.lowercase"] = title
 	}
 
-	size := c.ParamInt("per_page", query, 10000)
+	size := c.ParamInt("per_page", query, 10)
 	page := c.ParamInt("page", query, 1)
-	page = (page - 1) * size
-	if page < 0 {
-		page = 0
+	if page < 1 {
+		page = 1
 	}
+	from := (page - 1) * size
 
 	results := []models.Recipe{}
-	response, e := search.Find(terms, search.RecipeType, search.Index, size, page, "title", true)
+	response, e := search.Find(terms, search.RecipeType, search.Index, size, from, "title", true)
 	err.Check(e)
 
 	if response.Hits.TotalHits > 0 {
@@ -81,8 +81,10 @@ func (c Recipes) Index(w http.ResponseWriter, r *http.Request) {
 
 	pagination := createPagination(page, size, int(response.Hits.TotalHits))
 	data := map[string]interface{}{
-		"Recipes":    results,
-		"Pagination": pagination,
+		"Recipes":     results,
+		"Pagination":  pagination,
+		"Ingredients": ingredients,
+		"Title":       title,
 	}
 
 	c.Render(w, r, "recipes/index.html", data)

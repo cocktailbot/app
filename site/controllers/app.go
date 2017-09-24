@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"html/template"
 	"log"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,9 +19,11 @@ type Application struct {
 
 // Pagination stores meta about the current page, total pages, amount per page
 type Pagination struct {
-	Total   int
-	PerPage int
-	Page    int
+	Total    int
+	PerPage  int
+	Page     int
+	Next     int
+	Previous int
 }
 
 // TemplatePath path for template location
@@ -116,7 +119,15 @@ func (a Application) ParamInt(param string, query url.Values, def int) (value in
 func createPagination(page int, perPage int, total int) (pagination Pagination) {
 	pagination.Page = page
 	pagination.PerPage = perPage
-	pagination.Total = total
+	pagination.Total = int(math.Ceil(float64(total) / float64(perPage)))
+
+	if pagination.Page > 1 {
+		pagination.Previous = page - 1
+	}
+
+	if pagination.Page < pagination.Total {
+		pagination.Next = page + 1
+	}
 
 	return pagination
 }

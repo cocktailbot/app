@@ -12,4 +12,13 @@
             </li>
         {{end}}
     </ul>
+    <div>
+        {{if .Pagination.Previous}}
+            <a href="/recipes?page={{.Pagination.Previous}}&ingredients={{.Ingredients}}&title={{.Title}}">Previous</a>
+        {{end}}
+         Page {{.Pagination.Page}} / {{.Pagination.Total}}
+        {{if .Pagination.Next}}
+            <a href="/recipes?page={{.Pagination.Next}}&ingredients={{.Ingredients}}&title={{.Title}}">Next</a>
+        {{end}}
+    </div>
 {{end}}
