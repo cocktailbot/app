@@ -150,22 +150,41 @@ func Get(id string, typ string, index string) (*elastic.GetResult, error) {
 	return response, err
 }
 
-// Find search for a result by a term
-func Find(values map[string]string, typ string, index string, size int, from int, sortField string, asc bool) (*elastic.SearchResult, error) {
+// Find items matching all criteria
+func Find(terms map[string]string, typ string, index string, size int, from int, sortField string, asc bool) (*elastic.SearchResult, error) {
+	query := elastic.NewBoolQuery()
+
+	for field, term := range terms {
+		if len(term) > 0 {
+			q := elastic.NewMatchQuery(field, term).Operator("AND")
+			query = query.Must(q)
+		}
+	}
+
+	return FindByQuery(query, typ, index, size, from, sortField, asc)
+}
+
+// FindAny items matching any of the criteria
+func FindAny(terms map[string]string, typ string, index string, size int, from int, sortField string, asc bool) (*elastic.SearchResult, error) {
+	query := elastic.NewBoolQuery()
+
+	for field, term := range terms {
+		if len(term) > 0 {
+			q := elastic.NewMatchQuery(field, term).Operator("OR")
+			query = query.Should(q)
+		}
+	}
+
+	return FindByQuery(query, typ, index, size, from, sortField, asc)
+}
+
+// FindByQuery search for a result by a term
+func FindByQuery(query elastic.Query, typ string, index string, size int, from int, sortField string, asc bool) (*elastic.SearchResult, error) {
 	ctx := context.Background()
 	client, err := elastic.NewClient()
 
 	if err != nil {
 		return nil, err
-	}
-
-	query := elastic.NewBoolQuery()
-
-	for field, term := range values {
-		if len(term) > 0 {
-			q := elastic.NewMatchQuery(field, term).Operator("AND")
-			query = query.Must(q)
-		}
 	}
 
 	response, err := client.

@@ -59,7 +59,7 @@ func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 		"children.slug":          slug,
 		"children.children.slug": slug,
 	}
-	response, e := search.Find(terms, search.CategoryType, search.Index, 1, 0, "title", true)
+	response, e := search.FindAny(terms, search.CategoryType, search.Index, 1, 0, "title", true)
 
 	if response == nil || response.TotalHits() != 1 {
 		http.NotFound(w, r)
