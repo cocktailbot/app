@@ -19,7 +19,6 @@ func main() {
 
 	http.HandleFunc(controllers.RecipesDetailPath, recipes.Detail)
 	http.HandleFunc(controllers.RecipesIndexPath, recipes.Index)
-	http.HandleFunc(controllers.RecipesSearchPath, recipes.Search)
 
 	http.HandleFunc(controllers.CategoriesDetailPath, categories.Detail)
 	http.HandleFunc(controllers.CategoriesIndexPath, categories.Index)

@@ -24,11 +24,10 @@ type Categories struct {
 
 // Index page
 func (c Categories) Index(w http.ResponseWriter, r *http.Request) {
-	size := 10000 // Target all categories
+	size := 500 // Target all categories
 	page := 0
-
 	results := []models.Category{}
-	response, e := search.Find(map[string]string{}, size, page, search.CategoryType, search.Index, "title", true)
+	response, e := search.Find(map[string]string{}, search.CategoryType, search.Index, size, page, "title", true)
 	err.Check(e)
 
 	if response.Hits.TotalHits > 0 {
@@ -55,12 +54,12 @@ func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	slugs := strings.Split(path, "/")
 	slug := slugs[len(slugs)-1]
 	category := new(models.Category)
-	values := map[string]string{
+	terms := map[string]string{
 		"slug":                   slug,
 		"children.slug":          slug,
 		"children.children.slug": slug,
 	}
-	response, e := search.GetBy(values, search.CategoryType, search.Index)
+	response, e := search.Find(terms, search.CategoryType, search.Index, 1, 0, "title", true)
 
 	if response == nil || response.TotalHits() != 1 {
 		http.NotFound(w, r)
@@ -71,10 +70,10 @@ func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	err.Check(e)
 
 	recipes := []models.Recipe{}
-	values = map[string]string{
+	terms = map[string]string{
 		"categories.slug": slug,
 	}
-	response, e = search.GetBy(values, search.RecipeType, search.Index)
+	response, e = search.Find(terms, search.RecipeType, search.Index, 100, 0, "title", true)
 	err.Check(e)
 
 	if response != nil && response.TotalHits() > 0 {

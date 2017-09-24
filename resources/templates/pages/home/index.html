@@ -8,8 +8,15 @@
 <h1>Recipes</h1>
 
 <form action="/recipes" method="GET">
-    <input type="text" id="ingredients" name="ingredients" placeholder="apple, lemon, etc" value="{{.Ingredients}}" />
-    <button id="search">Search</button>
+    <div>
+        <input type="text" id="title" name="title" placeholder="ve, ves, vesper, etc" value="{{.Vesper}}" />
+    </div>
+    <div>
+        <input type="text" id="ingredients" name="ingredients" placeholder="apple, lemon, etc" value="{{.Ingredients}}" />
+    </div>
+    <div>
+        <button id="search">Search</button>
+    </div>
 </form>
 
 {{end}}
