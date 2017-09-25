@@ -9,16 +9,16 @@
 
     <div>Categories</div>
     <ul>
-        {{ range $i, $category := .Recipe.Categories }}
+        {{range $i, $category := .Recipe.Categories}}
             <li><a href="/categories/{{$category.URL}}">{{$category.Title}}</a></li>
-        {{ end }}
+        {{end}}
     </ul>
 
     <div>Ingredients</div>
     <ul>
-        {{ range $i, $ingredient := (index .Recipe.Ingredients 0).List }}
+        {{range $i, $ingredient := (index .Recipe.Ingredients 0).List}}
             <li>{{$ingredient.Amount}} {{$ingredient.Ingredient}}</li>
-        {{ end }}
+        {{end}}
     </ul>
     </ul>
 
