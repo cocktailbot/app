@@ -4,7 +4,16 @@
     <div><a href="/recipes">Recipes</a> / Cocktail Recipe Categories</div>
     <h1>{{.Category.Title}}</h1>
 
-    <div><a href="/categories">Categories</a> / {{.Category.Title}}</div>
+    <div>
+         <a href="/categories">Categories</a>
+        {{range $i, $breadcrumb := .Breadcrumbs}}
+            {{if $breadcrumb.Slug}}
+             / <a href="/categories/{{$breadcrumb.Slug}}">{{$breadcrumb.Title}}</a>
+            {{else}}
+             / {{$breadcrumb.Title}}
+            {{end}}
+        {{end}}
+    </div>
 
     <div>&nbsp;</div>
 

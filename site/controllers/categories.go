@@ -69,6 +69,7 @@ func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	e = json.Unmarshal(*response.Hits.Hits[0].Source, &category)
 	err.Check(e)
 
+	breadcrumbs := getBreadcrumbs(slug, category)
 	recipes := []models.Recipe{}
 	terms = map[string]string{
 		"categories.slug": slug,
@@ -86,9 +87,42 @@ func (c Categories) Detail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"Category": category,
-		"Recipes":  recipes,
+		"Category":    category,
+		"Recipes":     recipes,
+		"Breadcrumbs": breadcrumbs,
 	}
 
 	c.Render(w, r, "/categories/detail.html", data)
+}
+
+// Breadcrumb holds a title and possible a slug
+type Breadcrumb struct {
+	Title string
+	Slug  string
+}
+
+func getBreadcrumbs(slug string, c *models.Category) (breadcrumbs []Breadcrumb) {
+	parentSlug := c.Slug
+	if slug == c.Slug {
+		parentSlug = ""
+	}
+	breadcrumbs = append(breadcrumbs, Breadcrumb{c.Title, parentSlug})
+
+	for _, child := range c.Children {
+		if child.Slug == slug {
+			breadcrumbs = append(breadcrumbs, Breadcrumb{child.Title, ""})
+			break
+		}
+
+		for _, grandChild := range child.Children {
+			if grandChild.Slug == slug {
+				childSlug := c.Slug + "/" + child.Slug
+				breadcrumbs = append(breadcrumbs, Breadcrumb{child.Title, childSlug})
+				breadcrumbs = append(breadcrumbs, Breadcrumb{child.Title, ""})
+				break
+			}
+		}
+	}
+
+	return breadcrumbs
 }
