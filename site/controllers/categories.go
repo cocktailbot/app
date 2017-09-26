@@ -118,7 +118,7 @@ func getBreadcrumbs(slug string, c *models.Category) (breadcrumbs []Breadcrumb) 
 			if grandChild.Slug == slug {
 				childSlug := c.Slug + "/" + child.Slug
 				breadcrumbs = append(breadcrumbs, Breadcrumb{child.Title, childSlug})
-				breadcrumbs = append(breadcrumbs, Breadcrumb{child.Title, ""})
+				breadcrumbs = append(breadcrumbs, Breadcrumb{grandChild.Title, ""})
 				break
 			}
 		}
