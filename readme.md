@@ -10,6 +10,15 @@ Starting it up; this will setup the VM and install Go 1.8 and Elasticsearch 5.5
 
     cd resources
     vagrant up
+    vagrant ssh
+
+Inside Vagrant
+
+    cd /home/ubuntu/go_workspace/src/github.com/cocktailbot/app
+    go run site/server.go
+
+Then you can access the site at: `http://127.0.0.1/`
+
 
 Stopping
 
@@ -20,23 +29,10 @@ Troubleshooting; if there's issues with the VM, try destroying and rebuilding
     vagrant destroy -f
     vagrant up
 
-Accessing local environment
-
-    vagrant ssh
-
-## Commands
-
-    cd src/github.com/cocktailbot/app/
-
-Import data into Elasticsearch:
+Import runs automatically, but if needed to run manually:
 
     go run importer/cocktail.go --import resources/data/recipes.json resources/data/categories.json
 
-Running the server
-
-    go run site/server.go
-
-Then you can access the site at: `http://127.0.0.1/`
 
 
 <!-- Debug: Search for recipes with `lemon` and `apple` as ingredients
