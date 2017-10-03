@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cocktailbot/app/config"
+	"github.com/cocktailbot/app/search"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 )
@@ -48,9 +50,25 @@ func main() {
 
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
-		// Convert to json
-		// Save to search
-		fmt.Println(tweet.Text)
+		if !tweet.Retweeted {
+			// Convert to json
+			byt, err := json.Marshal(tweet)
+			if err != nil {
+				panic(err)
+			}
+			// then back into a map
+			var dat map[string]interface{}
+			if err := json.Unmarshal(byt, &dat); err != nil {
+				panic(err)
+			}
+			var tweets map[string]interface{}
+			coll := []interface{dat}
+			// coll = append(coll, dat)
+			// tweets["data"] = dat
+			// data := tweets["data"].([]interface{})
+			search.Save(coll, search.Index, search.TweetType)
+			fmt.Println(tweet.Text)
+		}
 	}
 	// demux.DM = func(dm *twitter.DirectMessage) {
 	// 	fmt.Println(dm.SenderID)
