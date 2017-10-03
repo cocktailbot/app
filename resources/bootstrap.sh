@@ -69,8 +69,7 @@ chown ubuntu:ubuntu /home/ubuntu/.bash_profile
 mkdir -p /home/ubuntu/go_workspace/{pkg,bin}
 mkdir -p /home/ubuntu/go_workspace/src/github.com/cocktailbot/app
 chown -R ubuntu:ubuntu /home/ubuntu/go_workspace
-
-# install packages
-# sudo -u ubuntu /usr/local/go/bin/go get gopkg.in/olivere/elastic.v5
+sudo -S -u ubuntu -i /bin/bash -l -c "sh ${PATH_SELF}/resources/packages.sh"
+sudo -S -u ubuntu -i /bin/bash -l -c "(cd ${PATH_SELF}; go run importer/cocktail.go --import resources/data/recipes.json resources/data/categories.json)"
 
 echo "Finished!"
