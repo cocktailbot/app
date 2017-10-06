@@ -2,7 +2,7 @@
 
 Place this folder into `$YOUR_GO_WORKSPACE/src/github.com/cocktailbot/app`
 
-    http://127.0.0.1/recipes?ingredients=vodka%20gin
+    http://127.0.0.1:8080/recipes?ingredients=vodka%20gin
 
 ## Local environment
 
@@ -17,7 +17,7 @@ Inside Vagrant
     cd /home/ubuntu/go_workspace/src/github.com/cocktailbot/app
     go run site/server.go
 
-Then you can access the site at: `http://127.0.0.1/`
+Then you can access the site at: `http://127.0.0.1:8080/`
 
 
 Stopping
