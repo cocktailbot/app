@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/cocktailbot/app/config"
 	"github.com/cocktailbot/app/search"
@@ -31,12 +30,12 @@ func main() {
 	// Twitter client
 	client := twitter.NewClient(httpClient)
 	// Send a Tweet
-	tweet, resp, err := client.Statuses.Update("The time is: "+time.Now().String(), nil)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(tweet)
-	fmt.Println(resp)
+	// tweet, resp, err := client.Statuses.Update("The time is: "+time.Now().String(), nil)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println(tweet)
+	// fmt.Println(resp)
 
 	params := &twitter.StreamFilterParams{
 		Track:         []string{"kitten"},
@@ -57,17 +56,17 @@ func main() {
 				panic(err)
 			}
 			// then back into a map
-			var dat map[string]interface{}
+			var dat interface{}
 			if err := json.Unmarshal(byt, &dat); err != nil {
 				panic(err)
 			}
-			var tweets map[string]interface{}
-			coll := []interface{dat}
-			// coll = append(coll, dat)
-			// tweets["data"] = dat
-			// data := tweets["data"].([]interface{})
-			search.Save(coll, search.Index, search.TweetType)
-			fmt.Println(tweet.Text)
+
+			coll := make([]interface{}, 1, 1)
+			coll[0] = dat
+			if err := search.Save(coll, search.Index, search.TweetType); err != nil {
+				panic(err)
+			}
+			// fmt.Println(tweet.Text)
 		}
 	}
 	// demux.DM = func(dm *twitter.DirectMessage) {

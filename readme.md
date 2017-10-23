@@ -33,6 +33,10 @@ Import runs automatically, but if needed to run manually:
 
     go run importer/cocktail.go --import resources/data/recipes.json resources/data/categories.json
 
+Running firehose/stream script
+
+    set -o allexport; source .env; set +o allexport
+    go run twitter/stream/stream.go
 
 
 <!-- Debug: Search for recipes with `lemon` and `apple` as ingredients

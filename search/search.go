@@ -3,6 +3,8 @@ package search
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"strconv"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
@@ -113,7 +115,14 @@ func Save(items []interface{}, index string, tp string) error {
 	bulkRequest := client.Bulk()
 
 	for _, item := range items {
-		id := item.(map[string]interface{})["id"].(string)
+		typ := reflect.TypeOf(item.(map[string]interface{})["id"]).String()
+		var id string
+		if typ == "string" {
+			id = item.(map[string]interface{})["id"].(string)
+		} else if typ == "float64" {
+			id = strconv.Itoa(int(item.(map[string]interface{})["id"].(float64)))
+		}
+
 		indexReq := elastic.
 			NewBulkIndexRequest().
 			Index(index).
@@ -125,11 +134,15 @@ func Save(items []interface{}, index string, tp string) error {
 
 	res, err := bulkRequest.Do(ctx)
 
-	fmt.Printf("Indexed items %d\n", len(res.Indexed()))
-
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Indexed %d/%d items: ", len(res.Succeeded()), len(items))
+	for _, item := range res.Succeeded() {
+		fmt.Printf(item.Id + " ")
+	}
+	fmt.Println("")
 
 	return nil
 }

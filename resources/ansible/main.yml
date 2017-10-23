@@ -137,6 +137,8 @@
       shell: |
         . /home/cocktailbot/.bash_profile
         go get gopkg.in/olivere/elastic.v5
+        go get github.com/dghubble/go-twitter/twitter
+        go get github.com/dghubble/oauth1        
       become: yes
       become_user: cocktailbot
 
