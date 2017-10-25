@@ -138,7 +138,7 @@ func Save(items []interface{}, index string, tp string) error {
 		return err
 	}
 
-	fmt.Printf("Indexed %d/%d items: ", len(res.Succeeded()), len(items))
+	fmt.Printf("\nIndexed %d/%d items: ", len(res.Succeeded()), len(items))
 	for _, item := range res.Succeeded() {
 		fmt.Printf(item.Id + " ")
 	}
