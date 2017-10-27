@@ -115,13 +115,7 @@ func Save(items []interface{}, index string, tp string) error {
 	bulkRequest := client.Bulk()
 
 	for _, item := range items {
-		typ := reflect.TypeOf(item.(map[string]interface{})["id"]).String()
-		var id string
-		if typ == "string" {
-			id = item.(map[string]interface{})["id"].(string)
-		} else if typ == "float64" {
-			id = strconv.Itoa(int(item.(map[string]interface{})["id"].(float64)))
-		}
+		id := formatID(item)
 
 		indexReq := elastic.
 			NewBulkIndexRequest().
@@ -215,4 +209,20 @@ func FindByQuery(query elastic.Query, typ string, index string, size int, from i
 	}
 
 	return response, err
+}
+
+func formatID(item interface{}) string {
+	itemID := item.(map[string]interface{})["id"]
+	typ := reflect.TypeOf(itemID).String()
+	var id string
+
+	if typ == "string" {
+		id = itemID.(string)
+	} else if typ == "float64" {
+		id = strconv.Itoa(int(itemID.(float64)))
+	} else {
+		panic(fmt.Sprintf("Invalid index ID format: '%v'", typ))
+	}
+
+	return id
 }
