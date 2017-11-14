@@ -1,32 +1,38 @@
 {{define "title"}}Recipe - {{.Recipe.Title}}{{end}}
 
 {{define "body"}}
-    <div><a href="/recipes">Recipes</a> / {{.Recipe.Title}}</div>
-    <h1>{{.Recipe.Title}}</h1>
+    <article>
+        <h1>{{.Recipe.Title}}</h1>
 
-    <div>Difficulty {{.Recipe.DifficultyRating}}</div>
-    <div>Time {{.Recipe.TotalTime}}</div>
+        <p><strong>Total time:</strong> {{.Recipe.TotalTime}} minutes</p>
 
-    <div>Categories</div>
-    <ul>
-        {{range $i, $category := .Recipe.Categories}}
-            <li><a href="/categories/{{$category.URL}}">{{$category.Title}}</a></li>
-        {{end}}
-    </ul>
+        <p><strong>Difficulty:</strong> {{.Recipe.DifficultyRating}}</p>
 
-    <div>Ingredients</div>
-    <ul>
-        {{range $i, $ingredient := (index .Recipe.Ingredients 0).List}}
-            <li>{{$ingredient.Amount}} {{$ingredient.Ingredient}}</li>
-        {{end}}
-    </ul>
-    </ul>
+        <div>Categories:</div>
+        <ul>
+            {{range $i, $category := .Recipe.Categories}}
+                <li><a href="/categories/{{$category.URL}}">{{$category.Title}}</a></li>
+            {{end}}
+        </ul>
 
-    <div>Methods</div>
-    <ol>
-        {{ range $i, $method := (index .Recipe.Methods 0).List }}
-            <li>{{$method.Step}}</li>
-        {{ end }}
-    </ol>
+        <div>
+            <h3>About</h3>
+            {{ entry.Description }}
+        </div>
 
+        <div>Ingredients</div>
+        <ul>
+            {{range $i, $ingredient := (index .Recipe.Ingredients 0).List}}
+                <li>{{$ingredient.Amount}} {{$ingredient.Ingredient}}</li>
+            {{end}}
+        </ul>
+        </ul>
+
+        <div>Methods</div>
+        <ol>
+            {{ range $i, $method := (index .Recipe.Methods 0).List }}
+                <li>{{$method.Step}}</li>
+            {{ end }}
+        </ol>
+    </article>
 {{end}}

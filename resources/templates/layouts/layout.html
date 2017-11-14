@@ -1,17 +1,46 @@
 {{define "layout"}}
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-  <meta charset="utf-8">
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+	<link rel="home" href="/">
+
   <title>Cocktailbot: {{template "title" .}}</title>
-  <link rel="stylesheet" href="/static/css/main.css">
-  <script
-    src="https://code.jquery.com/jquery-3.2.1.min.js"
-    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-    crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-  {{template "body" .}}
-</body>
-</html>
+    <div id="container">
+		<header id="header">
+			<h1><a href="{{ siteUrl }}">{{ siteName }}</a></h1>
+
+			<nav>
+				<ul>
+                    <li><div class="search-nav-btn">{{template "globals/_search_icon"}}</div></li>
+					<li><a href="/categories">Categories</a></li>
+					<li><a href="/recipes">Recipes</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="content" role="main">
+			{{template "body" .}}
+		</main>
+
+		<footer id="footer">
+			Copyright. All rights reserved.</a>
+		</footer>
+	</div>
+
+    {{template "globals/_search-form"}}
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body></html>
 {{end}}

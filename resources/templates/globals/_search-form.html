@@ -1,0 +1,12 @@
+<div class="search-wrapper">
+    <form class="search-form" action="/recipes" method="GET">
+        <div>
+            <input type="text" id="title" name="title" placeholder="ve, ves, vesper, etc" value="{{.Vesper}}">
+        </div>
+        <div>
+            <input type="text" id="ingredients" name="ingredients" placeholder="apple, lemon, etc" value="{{.Ingredients}}">
+        </div>
+    </form>
+
+    <div class="search-form-close">{{template "globals/_close-icon"}}</div>
+</div>

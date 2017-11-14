@@ -1,22 +1,10 @@
-{{define "title"}}Recipes{{end}}
+$title := Recipes
+
+{{define "title"}}{{$title}}{{end}}
 
 {{define "body"}}
+    <div><a href="/recipes">Recipes</a></div>
+    <div><a href="/categories">Categories</a></div>
 
-<div><a href="/recipes">Recipes</a></div>
-<div><a href="/categories">Categories</a></div>
-
-<h1>Recipes</h1>
-
-<form action="/recipes" method="GET">
-    <div>
-        <input type="text" id="title" name="title" placeholder="ve, ves, vesper, etc" value="{{.Vesper}}" />
-    </div>
-    <div>
-        <input type="text" id="ingredients" name="ingredients" placeholder="apple, lemon, etc" value="{{.Ingredients}}" />
-    </div>
-    <div>
-        <button id="search">Search</button>
-    </div>
-</form>
-
+    <h1>{{$title}}</h1>
 {{end}}
